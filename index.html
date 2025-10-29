@@ -1,0 +1,1825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlowLedge - Smart Money Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .dark { background-color: #1a202c; color: #e2e8f0; }
+        .dark .bg-white { background-color: #2d3748; }
+        .dark .bg-gray-50 { background-color: #2d3748; }
+        .dark .bg-gray-100 { background-color: #374151; }
+        .dark .text-gray-700 { color: #e2e8f0; }
+        .dark .text-gray-600 { color: #cbd5e0; }
+        .dark .border-gray-200 { border-color: #4a5568; }
+        .dark .border-gray-300 { border-color: #4a5568; }
+        .dark .hover\:bg-gray-100:hover { background-color: #374151; }
+        .page { display: none; }
+        .page.active { display: block; }
+        .transaction-row:hover { background-color: rgba(0,0,0,0.05); }
+        .dark .transaction-row:hover { background-color: rgba(255,255,255,0.05); }
+        .goal-progress { transition: width 0.5s ease-in-out; }
+        .fade-in { animation: fadeIn 0.3s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal { display: none; position: fixed; z-index: 50; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); }
+        .modal.active { display: flex; align-items: center; justify-content: center; }
+        .profile-image { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+        .large-profile-image { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+    <!-- Navigation -->
+    <nav class="bg-teal-600 text-white shadow-lg">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-wallet text-2xl"></i>
+                <h1 class="text-xl font-bold">FlowLedge</h1>
+            </div>
+            
+            <div class="hidden md:flex space-x-6">
+                <button onclick="showPage('home')" class="nav-btn hover:text-teal-200 transition">Home</button>
+                <button onclick="showPage('union-report')" class="nav-btn hover:text-teal-200 transition">Union Report</button>
+                <button onclick="showPage('dashboard')" class="nav-btn hover:text-teal-200 transition">Dashboard</button>
+                <button onclick="showPage('reports')" class="nav-btn hover:text-teal-200 transition">Reports</button>
+                <button onclick="showPage('account')" class="nav-btn hover:text-teal-200 transition">Account</button>
+                <button onclick="showPage('about')" class="nav-btn hover:text-teal-200 transition">About</button>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                <button onclick="toggleDarkMode()" class="p-2 rounded-full hover:bg-teal-700 transition">
+                    <i class="fas fa-moon" id="theme-icon"></i>
+                </button>
+                <div id="auth-buttons">
+                    <!-- Auth buttons will be dynamically inserted here -->
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Navigation -->
+    <div class="md:hidden bg-teal-700 text-white p-2 flex justify-around">
+        <button onclick="showPage('home')" class="p-2"><i class="fas fa-home"></i></button>
+        <button onclick="showPage('union-report')" class="p-2"><i class="fas fa-chart-bar"></i></button>
+        <button onclick="showPage('dashboard')" class="p-2"><i class="fas fa-chart-pie"></i></button>
+        <button onclick="showPage('reports')" class="p-2"><i class="fas fa-file-alt"></i></button>
+        <button onclick="showPage('account')" class="p-2"><i class="fas fa-user"></i></button>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal">
+        <div class="bg-white rounded-xl shadow-lg p-8 w-full max-w-md">
+            <div class="text-center mb-8">
+                <i class="fas fa-wallet text-4xl text-teal-600 mb-4"></i>
+                <h1 class="text-3xl font-bold text-teal-700">Welcome to FlowLedge</h1>
+                <p class="text-gray-600">Sign in to your account</p>
+            </div>
+            
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label class="block text-gray-700 mb-2">Admission Number</label>
+                    <input type="text" id="login-username" placeholder="Enter your admission number" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent" required>
+                </div>
+                
+                <div>
+                    <label class="block text-gray-700 mb-2">Password</label>
+                    <input type="password" id="login-password" placeholder="Enter your password" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent" required>
+                </div>
+                
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <input type="checkbox" id="remember-me" class="mr-2 h-4 w-4 text-teal-600 rounded focus:ring-teal-500">
+                        <label for="remember-me">Remember me</label>
+                    </div>
+                    <a href="#" class="text-teal-600 hover:text-teal-800 transition">Forgot Password?</a>
+                </div>
+                
+                <div class="flex justify-center">
+                    <button type="submit" class="bg-teal-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-teal-700 transition">
+                        Sign In
+                    </button>
+                </div>
+            </form>
+            
+            <div class="mt-6 text-center">
+                <p class="text-gray-600">Contact administrator for account issues</p>
+            </div>
+            
+            <div class="mt-4 flex justify-end">
+                <button onclick="closeLoginModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-8">
+        <!-- Home Page -->
+        <div id="home" class="page active fade-in">
+            <div class="text-center mb-12">
+                <h1 class="text-4xl md:text-5xl font-bold text-teal-700 mb-4">Smart Way to Manage Your Money</h1>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto mb-8">Track expenses, analyze spending patterns, and achieve your financial goals with FlowLedge</p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <button onclick="showPage('union-report')" class="bg-teal-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-teal-700 transition shadow-lg">
+                        View Union Report <i class="fas fa-chart-bar ml-2"></i>
+                    </button>
+                    <button onclick="showPage('dashboard')" class="bg-white text-teal-600 px-8 py-3 rounded-lg text-lg font-semibold hover:bg-teal-100 transition shadow-lg">
+                        Personal Dashboard <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8 mb-16">
+                <div class="bg-white p-6 rounded-xl shadow-md text-center hover:shadow-lg transition">
+                    <div class="bg-teal-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-chart-line text-teal-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Track Everything</h3>
+                    <p class="text-gray-600">Monitor income, expenses, and savings in one place</p>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-md text-center hover:shadow-lg transition">
+                    <div class="bg-teal-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-chart-pie text-teal-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Analyze Spending</h3>
+                    <p class="text-gray-600">Visual reports show where your money goes</p>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-md text-center hover:shadow-lg transition">
+                    <div class="bg-teal-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-piggy-bank text-teal-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Save Smarter</h3>
+                    <p class="text-gray-600">Set goals and track your progress</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-md p-8 mb-12">
+                <h2 class="text-2xl font-bold mb-6 text-center">Union Financial Overview</h2>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="bg-teal-50 p-6 rounded-lg text-center">
+                        <p class="text-gray-600">Total Income</p>
+                        <p class="text-3xl font-bold text-teal-700">$<span id="union-income">0</span></p>
+                    </div>
+                    <div class="bg-red-50 p-6 rounded-lg text-center">
+                        <p class="text-gray-600">Total Expenses</p>
+                        <p class="text-3xl font-bold text-red-700">$<span id="union-expenses">0</span></p>
+                    </div>
+                    <div class="bg-gray-100 p-6 rounded-lg text-center">
+                        <p class="text-gray-600">Net Balance</p>
+                        <p class="text-3xl font-bold text-gray-800">$<span id="union-balance">0</span></p>
+                    </div>
+                </div>
+                <div class="text-center mt-6">
+                    <button onclick="showPage('union-report')" class="bg-teal-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-teal-700 transition">
+                        View Full Union Report <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Union Report Page -->
+        <div id="union-report" class="page fade-in">
+            <h1 class="text-3xl font-bold mb-8 text-teal-700">Union Financial Report</h1>
+            
+            <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+                <div class="grid md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-teal-50 p-6 rounded-lg text-center">
+                        <p class="text-gray-600">Total Income</p>
+                        <p class="text-3xl font-bold text-teal-700">$<span id="union-report-income">0</span></p>
+                    </div>
+                    <div class="bg-red-50 p-6 rounded-lg text-center">
+                        <p class="text-gray-600">Total Expenses</p>
+                        <p class="text-3xl font-bold text-red-700">$<span id="union-report-expenses">0</span></p>
+                    </div>
+                    <div class="bg-gray-100 p-6 rounded-lg text-center">
+                        <p class="text-gray-600">Net Balance</p>
+                        <p class="text-3xl font-bold text-gray-800">$<span id="union-report-balance">0</span></p>
+                    </div>
+                </div>
+                
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-4">Union Spending Insights</h3>
+                    <div id="union-insights-container" class="space-y-3">
+                        <p class="text-gray-600">Generating insights...</p>
+                    </div>
+                </div>
+                
+                <div class="flex justify-end space-x-4 mb-6">
+                    <button onclick="exportUnionToCSV()" class="bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-700 transition">
+                        <i class="fas fa-file-csv mr-2"></i>Export CSV
+                    </button>
+                    <button onclick="exportUnionToPDF()" class="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-700 transition">
+                        <i class="fas fa-file-pdf mr-2"></i>Export PDF
+                    </button>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-bold">All Transactions</h2>
+                    <div class="flex space-x-2">
+                        <input type="text" id="union-search" placeholder="Search transactions..." class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent">
+                        <select id="union-category-filter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent">
+                            <option value="all">All Categories</option>
+                            <option value="Food">Food</option>
+                            <option value="Transport">Transport</option>
+                            <option value="Housing">Housing</option>
+                            <option value="Entertainment">Entertainment</option>
+                            <option value="Healthcare">Healthcare</option>
+                            <option value="Salary">Salary</option>
+                            <option value="Freelance">Freelance</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="text-left text-gray-600 border-b">
+                                <th class="pb-3">Date</th>
+                                <th class="pb-3">User</th>
+                                <th class="pb-3">Description</th>
+                                <th class="pb-3">Category</th>
+                                <th class="pb-3">Type</th>
+                                <th class="pb-3">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody id="union-transactions-list">
+                            <!-- Transactions will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Page -->
+        <div id="dashboard" class="page fade-in">
+            <div class="flex justify-between items-center mb-8">
+                <h1 class="text-3xl font-bold text-teal-700">Financial Dashboard</h1>
+                <div id="user-welcome" class="text-lg font-semibold flex items-center space-x-3">
+                    <!-- User profile image and name will be inserted here -->
+                </div>
+            </div>
+            
+            <!-- Balance Overview -->
+            <div class="grid md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-gray-600">Total Income</p>
+                            <p class="text-2xl font-bold text-green-600">$<span id="total-income">0</span></p>
+                        </div>
+                        <div class="bg-green-100 p-3 rounded-full">
+                            <i class="fas fa-arrow-up text-green-600 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-gray-600">Total Expenses</p>
+                            <p class="text-2xl font-bold text-red-600">$<span id="total-expenses">0</span></p>
+                        </div>
+                        <div class="bg-red-100 p-3 rounded-full">
+                            <i class="fas fa-arrow-down text-red-600 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-gray-600">Current Balance</p>
+                            <p class="text-2xl font-bold text-teal-600">$<span id="current-balance">0</span></p>
+                        </div>
+                        <div class="bg-teal-100 p-3 rounded-full">
+                            <i class="fas fa-wallet text-teal-600 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8 mb-8">
+                <!-- Add Transaction Form -->
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h2 class="text-xl font-bold mb-4">Add Transaction</h2>
+                    <form id="transaction-form" class="space-y-4">
+                        <div>
+                            <label class="block text-gray-700 mb-2">Type</label>
+                            <select id="transaction-type" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent">
+                                <option value="income">Income</option>
+                                <option value="expense">Expense</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-gray-700 mb-2">Amount</label>
+                            <input type="number" id="transaction-amount" placeholder="0.00" step="0.01" min="0" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent" required>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-gray-700 mb-2">Category</label>
+                            <select id="transaction-category" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent">
+                                <option value="Food">Food</option>
+                                <option value="Transport">Transport</option>
+                                <option value="Housing">Housing</option>
+                                <option value="Entertainment">Entertainment</option>
+                                <option value="Healthcare">Healthcare</option>
+                                <option value="Salary">Salary</option>
+                                <option value="Freelance">Freelance</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-gray-700 mb-2">Date</label>
+                            <input type="date" id="transaction-date" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent" required>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-gray-700 mb-2">Notes</label>
+                            <input type="text" id="transaction-notes" placeholder="Optional notes" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent">
+                        </div>
+                        
+                        <button type="submit" class="w-full bg-teal-600 text-white py-3 rounded-lg font-semibold hover:bg-teal-700 transition">
+                            Add Transaction
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- Expense Chart -->
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h2 class="text-xl font-bold mb-4">Expense Breakdown</h2>
+                    <div class="h-64">
+                        <canvas id="expense-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Transactions -->
+            <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-bold">Recent Transactions</h2>
+                    <div class="flex space-x-2">
+                        <button onclick="refreshTransactions()" class="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition">
+                            <i class="fas fa-sync-alt mr-1"></i> Refresh
+                        </button>
+                        <button onclick="clearTransactions()" class="text-red-600 hover:text-red-800 transition px-4 py-2 rounded-lg border border-red-200">
+                            <i class="fas fa-trash-alt mr-1"></i> Clear All
+                        </button>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="text-left text-gray-600 border-b">
+                                <th class="pb-3">Date</th>
+                                <th class="pb-3">Description</th>
+                                <th class="pb-3">Category</th>
+                                <th class="pb-3">Amount</th>
+                                <th class="pb-3">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactions-list">
+                            <tr>
+                                <td colspan="5" class="text-center py-8 text-gray-500">No transactions yet. Add your first transaction!</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reports Page -->
+        <div id="reports" class="page fade-in">
+            <h1 class="text-3xl font-bold mb-8 text-teal-700">Financial Reports</h1>
+            
+            <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+                <div class="flex flex-wrap gap-4 mb-6">
+                    <div>
+                        <label class="block text-gray-700 mb-2">From Date</label>
+                        <input type="date" id="report-from" class="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2">To Date</label>
+                        <input type="date" id="report-to" class="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2">Category</label>
+                        <select id="report-category" class="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent">
+                            <option value="all">All Categories</option>
+                            <option value="Food">Food</option>
+                            <option value="Transport">Transport</option>
+                            <option value="Housing">Housing</option>
+                            <option value="Entertainment">Entertainment</option>
+                            <option value="Healthcare">Healthcare</option>
+                            <option value="Salary">Salary</option>
+                            <option value="Freelance">Freelance</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="flex items-end">
+                        <button onclick="generateReport()" class="bg-teal-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-teal-700 transition">
+                            Generate Report
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="grid md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-teal-50 p-4 rounded-lg">
+                        <p class="text-gray-600">Total Income</p>
+                        <p class="text-2xl font-bold text-teal-700">$<span id="report-income">0</span></p>
+                    </div>
+                    <div class="bg-red-50 p-4 rounded-lg">
+                        <p class="text-gray-600">Total Expenses</p>
+                        <p class="text-2xl font-bold text-red-700">$<span id="report-expenses">0</span></p>
+                    </div>
+                    <div class="bg-gray-100 p-4 rounded-lg">
+                        <p class="text-gray-600">Net Balance</p>
+                        <p class="text-2xl font-bold text-gray-800">$<span id="report-balance">0</span></p>
+                    </div>
+                </div>
+                
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-4">Spending Insights</h3>
+                    <div id="insights-container" class="space-y-3">
+                        <p class="text-gray-600">Generate a report to see insights</p>
+                    </div>
+                </div>
+                
+                <div class="flex justify-end space-x-4">
+                    <button onclick="exportToCSV()" class="bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-700 transition">
+                        <i class="fas fa-file-csv mr-2"></i>Export CSV
+                    </button>
+                    <button onclick="exportToPDF()" class="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-700 transition">
+                        <i class="fas fa-file-pdf mr-2"></i>Export PDF
+                    </button>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <h2 class="text-xl font-bold mb-6">Monthly Summary</h2>
+                <div class="h-80">
+                    <canvas id="monthly-chart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Account Page -->
+        <div id="account" class="page fade-in">
+            <h1 class="text-3xl font-bold mb-8 text-teal-700">Account Settings</h1>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h2 class="text-xl font-bold mb-6">Profile Information</h2>
+                    <div class="flex flex-col items-center mb-6">
+                        <div class="relative mb-4">
+                            <img id="account-profile-image" src="" alt="Profile" class="large-profile-image">
+                            <label for="profile-image-upload" class="absolute bottom-0 right-0 bg-teal-600 text-white p-2 rounded-full cursor-pointer hover:bg-teal-700 transition">
+                                <i class="fas fa-camera"></i>
+                            </label>
+                            <input type="file" id="profile-image-upload" class="hidden" accept="image/*">
+                        </div>
+                        <h3 id="account-profile-name" class="text-xl font-semibold"></h3>
+                        <p id="account-profile-id" class="text-gray-600"></p>
+                    </div>
+                    <form id="profile-form" class="space-y-4">
+                        <div>
+                            <label class="block text-gray-700 mb-2">Admission Number</label>
+                            <input type="text" id="profile-admission" readonly class="w-full p-3 border border-gray-300 rounded-lg bg-gray-100">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-gray-700 mb-2">Full Name</label>
+                            <input type="text" id="profile-name" placeholder="Your Name" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-gray-700 mb-2">Email</label>
+                            <input type="email" id="profile-email" placeholder="your@email.com" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-gray-700 mb-2">Password</label>
+                            <input type="password" id="profile-password" placeholder="••••••••" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent">
+                        </div>
+                        
+                        <button type="submit" class="w-full bg-teal-600 text-white py-3 rounded-lg font-semibold hover:bg-teal-700 transition">
+                            Update Profile
+                        </button>
+                    </form>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h2 class="text-xl font-bold mb-6">Preferences</h2>
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-gray-700 mb-2">Currency</label>
+                            <select id="currency" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent">
+                                <option value="INR">Indian Rupees (INR)</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-gray-700 mb-2">Theme</label>
+                            <div class="flex space-x-4">
+                                <button onclick="setTheme('light')" class="flex-1 p-3 border border-gray-300 rounded-lg hover:bg-gray-100 transition">
+                                    <i class="fas fa-sun mr-2"></i> Light
+                                </button>
+                                <button onclick="setTheme('dark')" class="flex-1 p-3 border border-gray-300 rounded-lg hover:bg-gray-100 transition">
+                                    <i class="fas fa-moon mr-2"></i> Dark
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-gray-700 mb-2">Budget Alerts</label>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="budget-alerts" class="mr-3 h-5 w-5 text-teal-600 rounded focus:ring-teal-500">
+                                <label for="budget-alerts">Enable budget limit alerts</label>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-gray-700 mb-2">Monthly Budget Limit</label>
+                            <input type="number" id="budget-limit" placeholder="0.00" step="0.01" min="0" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md p-6 mt-8">
+                <h2 class="text-xl font-bold mb-6">Data Management</h2>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="font-semibold mb-3">Backup Your Data</h3>
+                        <p class="text-gray-600 mb-4">Export all your financial data as a JSON file</p>
+                        <button onclick="exportData()" class="bg-teal-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-teal-700 transition">
+                            <i class="fas fa-download mr-2"></i>Export Data
+                        </button>
+                    </div>
+                    
+                    <div>
+                        <h3 class="font-semibold mb-3">Restore Data</h3>
+                        <p class="text-gray-600 mb-4">Import previously exported data</p>
+                        <input type="file" id="import-file" accept=".json" class="hidden">
+                        <button onclick="document.getElementById('import-file').click()" class="bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-700 transition">
+                            <i class="fas fa-upload mr-2"></i>Import Data
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- About Page -->
+        <div id="about" class="page fade-in">
+            <h1 class="text-3xl font-bold mb-8 text-teal-700">About FlowLedge</h1>
+            
+            <div class="bg-white rounded-xl shadow-md p-8 mb-8">
+                <div class="max-w-3xl mx-auto">
+                    <p class="text-lg text-gray-700 mb-6">
+                        FlowLedge is a comprehensive money management platform designed to help individuals and families take control of their finances. Our mission is to make financial tracking simple, insightful, and empowering.
+                    </p>
+                    
+                    <p class="text-lg text-gray-700 mb-6">
+                        Founded with the belief that everyone deserves financial clarity, FlowLedge combines powerful analytics with an intuitive interface to help you understand your spending habits, achieve your savings goals, and build a better financial future.
+                    </p>
+                    
+                    <div class="grid md:grid-cols-3 gap-6 my-8">
+                        <div class="text-center">
+                            <div class="bg-teal-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-shield-alt text-teal-600 text-2xl"></i>
+                            </div>
+                            <h3 class="font-bold text-lg mb-2">Secure</h3>
+                            <p class="text-gray-600">Your data is encrypted and protected with industry-standard security measures.</p>
+                        </div>
+                        
+                        <div class="text-center">
+                            <div class="bg-teal-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-chart-line text-teal-600 text-2xl"></i>
+                            </div>
+                            <h3 class="font-bold text-lg mb-2">Insightful</h3>
+                            <p class="text-gray-600">Get actionable insights about your spending patterns and financial health.</p>
+                        </div>
+                        
+                        <div class="text-center">
+                            <div class="bg-teal-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-mobile-alt text-teal-600 text-2xl"></i>
+                            </div>
+                            <h3 class="font-bold text-lg mb-2">Accessible</h3>
+                            <p class="text-gray-600">Manage your finances anytime, anywhere with our responsive design.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8 mt-16">
+        <div class="container mx-auto px-4">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <i class="fas fa-wallet text-2xl text-teal-400"></i>
+                        <h3 class="text-xl font-bold">FlowLedge</h3>
+                    </div>
+                    <p class="text-gray-400">Smart money management for everyone.</p>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold mb-4">Quick Links</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" onclick="showPage('home')" class="text-gray-400 hover:text-white transition">Home</a></li>
+                        <li><a href="#" onclick="showPage('union-report')" class="text-gray-400 hover:text-white transition">Union Report</a></li>
+                        <li><a href="#" onclick="showPage('dashboard')" class="text-gray-400 hover:text-white transition">Dashboard</a></li>
+                        <li><a href="#" onclick="showPage('about')" class="text-gray-400 hover:text-white transition">About</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold mb-4">Legal</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Privacy Policy</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Terms of Service</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Cookie Policy</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold mb-4">Subscribe</h4>
+                    <p class="text-gray-400 mb-4">Get financial tips and updates</p>
+                    <div class="flex">
+                        <input type="email" placeholder="Your email" class="px-4 py-2 rounded-l-lg text-gray-800 w-full focus:outline-none">
+                        <button class="bg-teal-600 px-4 py-2 rounded-r-lg hover:bg-teal-700 transition">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-400">
+                <p>&copy; 2025 FlowLedge. All rights reserved.</p>
+                <p>&copy; Designed by Rifad</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // User database with profile images
+        const users = {
+            '1050': { 
+                name: 'MUHAMMAD SINAN PC', 
+                password: '001050',
+                image: 'https://z-cdn-media.chatglm.cn/files/7e0305ef-6819-4629-b515-8777b1eb9f91_1050.jpg?auth_key=1793237664-77a64e3cd53847f2bdf7f9ed738f6f85-0-a189166aafb66b1acedbee3ed5d2ee6a'
+            },
+            '1070': { 
+                name: 'MUHAMMED MUSAMMIL B K', 
+                password: '001070',
+                image: 'https://z-cdn-media.chatglm.cn/files/f72d818c-5f56-4e3c-a1d3-d57ca2eea10d_1070.jpg?auth_key=1793237665-e24c742ee3c64d49a50828e11d41977e-0-41fd370ad6d2cd2aaccb60d42caf352f'
+            },
+            '1074': { 
+                name: 'MUAD .M', 
+                password: '001074',
+                image: 'https://z-cdn-media.chatglm.cn/files/b5c97ff8-b322-4b3c-8f99-f4ce989ea190_1074.jpg?auth_key=1793237665-a9b031fc7eba4c7fa59aa2a7dd798f28-0-11bfa39955de46bc7feb296e9b027baf'
+            },
+            '1058': { 
+                name: 'MUHAMMED JALAL AT', 
+                password: '001058',
+                image: 'https://z-cdn-media.chatglm.cn/files/e9d74094-8832-4529-ae53-7fee81c7d2cf_1058.jpg?auth_key=1793237665-18374d8e9479446a8ebed082c1cb1526-0-9f8011015ea2eb6f569177579e1786c4'
+            },
+            '1051': { 
+                name: 'MUHAMMAD HISHAM T', 
+                password: '001051',
+                image: 'https://z-cdn-media.chatglm.cn/files/76c9fd55-5990-4c8c-aa79-fc3f6cd39574_1051.jpg?auth_key=1793237664-40913db37c894624ba289754d3d1e3b4-0-8ce764c013086b0ba2f1cf61fc1bcb86'
+            },
+            '1056': { 
+                name: 'MUHAMMED SHADIN N.M.', 
+                password: '001056',
+                image: 'https://z-cdn-media.chatglm.cn/files/94eb6949-f39e-47a6-a4c5-6c4190382738_1056.jpg?auth_key=1793237665-17238b8e9b4f4165b4453206e9e9973b-0-86bd0d78ed07207fa91e01c20bf2830b'
+            },
+            '1076': { 
+                name: 'MUHAMMED MINHAJ KK', 
+                password: '001076',
+                image: 'https://z-cdn-media.chatglm.cn/files/8005d8af-303b-4cb0-abf9-1d9b0f59cb77_1076.jpg?auth_key=1793237665-78eb855850b84ebe8bd66c4f6aa8d095-0-f540a852713afb379297e8c232279cf3'
+            },
+            '1071': { 
+                name: 'SAYYID MOHAMMAD ZUHAIR A K', 
+                password: '001071',
+                image: 'https://z-cdn-media.chatglm.cn/files/65a4cd60-a9d9-403a-bfb6-909e6a3d1967_1071.jpg?auth_key=1793237665-a7f116ad58ac4bff8700e0d877958b4ce-0-0e2db1984030155e792fca7ebec43bf6'
+            },
+            '1075': { 
+                name: 'MUHAMMED HASHIM P', 
+                password: '001075',
+                image: 'https://z-cdn-media.chatglm.cn/files/0cb46551-a033-478c-985d-6c17d66c6ae2_1075.jpg?auth_key=1793237665-f3a4fbd83b5f4a039c1cef34e82b853d-0-f76aded06384be8e5d06a308b939f56c'
+            },
+            '1061': { 
+                name: 'ANSHID M P', 
+                password: '001061',
+                image: 'https://z-cdn-media.chatglm.cn/files/b8d273d3-ab88-4366-8ffb-81a26ef49291_1061.jpg?auth_key=1793237665-b4d4c60914ff47b490c647f706b7a474-0-d8c043d1b25edf28c28ccbe2ab3aca34'
+            },
+            '1072': { 
+                name: 'MOHAMMED SINAN TP', 
+                password: '001072',
+                image: 'https://z-cdn-media.chatglm.cn/files/659ac722-919b-4796-bba5-c9cf9e7baf0f_1072.jpg?auth_key=1793237665-0b97beafd2274bc7b28f3c3d3a4e0857-0-5a274a48365b7ca8d7c76220ea8c9f3'
+            },
+            '1078': { 
+                name: 'MUHAMMED RABIEUE MK', 
+                password: '001078',
+                image: 'https://z-cdn-media.chatglm.cn/files/52e8a112-928b-4c45-abd8-f9f0cb3a3c77_1078.jpg?auth_key=1793237665-36af5e95928244c9aac8966d82a174c1-0-fe7365eaaac7f8e6a7654b1946ea243c'
+            },
+            '1088': { 
+                name: 'MOHAMMED NAEEM K', 
+                password: '001088',
+                image: 'https://z-cdn-media.chatglm.cn/files/ef65ba76-6ee6-4e58-86c8-d46fe51c01b3_1088.jpg?auth_key=1793237665-ad3f4e71812b4d58a619f03f65789b91-0-0370daf2330e66776b54cb519c0385e4'
+            },
+            '1082': { 
+                name: 'MUHAMMED SANEEN', 
+                password: '001082',
+                image: 'https://z-cdn-media.chatglm.cn/files/aeb2b33f-65d7-4375-a717-5fd1edf59f25_1082.jpg?auth_key=1793237665-0e9fa5af7b3d4944b981e0913c3b6d89-0-ba55bb68fd58d942e65de72cdc0c0def'
+            },
+            '1090': { 
+                name: 'MUHAMMED BASSAM', 
+                password: '001090',
+                image: 'https://z-cdn-media.chatglm.cn/files/cebeff30-89a5-484e-b981-f6dbbbb22fe6_1090.jpg?auth_key=1793237665-a44c0e20e4d04609970ce16db4d35acb-0-37abba856524ecea6f7983df95f9d82'
+            },
+            '1066': { 
+                name: 'HASHIM MOHAMMED K P', 
+                password: '001066',
+                image: 'https://z-cdn-media.chatglm.cn/files/2b1a7bee-3522-4c25-88e9-6816598d2898_1066.jpg?auth_key=1793237665-71e635ac29894e3fac0f887c7da3c267-0-0fed3c21a28bf252c29b74eaf78d5ea8'
+            },
+            '1063': { 
+                name: 'MOHAMMED RISHADH. T', 
+                password: '001063',
+                image: 'https://z-cdn-media.chatglm.cn/files/c82335be-a854-446b-85b0-7a04cd4fc2ec_1063.jpg?auth_key=1793237665-0f11036ca9eb4b1387c0034ec6d963aa-0-ceaa0df7e005669826d63ad3a8c0c23c'
+            },
+            '1073': { 
+                name: 'MUHAMMAD MUSTHAFA KK', 
+                password: '001073',
+                image: 'https://z-cdn-media.chatglm.cn/files/c677473b-7263-41c7-b420-5cae6c96cc0a_1073.jpg?auth_key=1793237665-af7a354571b649bfbbdd896006df87e5-0-62553e62b7dcb94a7ba3833f04e15b39'
+            },
+            '1068': { 
+                name: 'MUHAMMED UVAIS.EK', 
+                password: '001068',
+                image: 'https://z-cdn-media.chatglm.cn/files/7ca4a164-7e37-444b-aca9-1b89213dcf1d_1068.jpg?auth_key=1793237665-709c4a0140d5469d9966bae906d10032-0-83c0ef6dd897029495971b8f186841f0'
+            },
+            '1053': { 
+                name: 'AMEEN T', 
+                password: '001053',
+                image: 'https://ui-avatars.com/api/?name=AMEEN%20T&background=random'
+            },
+            '1040': { 
+                name: 'MUHAMMAD RIFAD K', 
+                password: '001040',
+                image: 'https://z-cdn-media.chatglm.cn/files/a2534a9f-1267-4d42-a505-bf789528c5db_1040.jpg?auth_key=1793237664-f6351a913fe24eaebc76e3356cbbcb3a-0-1829572bf1989375aa21f37caf3eb1b2'
+            },
+            '1059': { 
+                name: 'AFSAL', 
+                password: '001059',
+                image: 'https://z-cdn-media.chatglm.cn/files/77775d01-a4b5-4e34-8d37-9c5bdcd373fb_1059.jpg?auth_key=1793237665-f70d767684c8484e9a295d2090e33ed2-0-82b1f74c59d744e979e31d6cdb433e15'
+            },
+            '1064': { 
+                name: 'MOHAMED SHAMIL M', 
+                password: '001064',
+                image: 'https://z-cdn-media.chatglm.cn/files/3363b104-0d1f-4d16-bd91-27ff5821e23e_1064.jpg?auth_key=1793237665-471e14e1926f4bb0a1555fb5a87c7863-0-8a72520b0d9e69f9ddf5a321893d006a'
+            },
+            '1013': { 
+                name: 'MOHAMMED SAHAD.K', 
+                password: '001013',
+                image: 'https://z-cdn-media.chatglm.cn/files/3a8925a4-02c7-4da4-8bbc-4aea1aed6234_1013.jpg?auth_key=1793237664-4243a8d0cb974c1c9d8d327b589d6639-0-af8f4c18cd42e20afd28463e1d2ee840'
+            },
+            '1087': { 
+                name: 'MUHAMMED SHAMIL. A', 
+                password: '001087',
+                image: 'https://z-cdn-media.chatglm.cn/files/ffa8408e-1e0f-4c5f-921f-8b89cdfa9e82_1087.jpg?auth_key=1793237665-03755786becb4d6a8592c0efaebab87d-0-54861e1ba89eb76b5ab8f957112ab447'
+            },
+            '1089': { 
+                name: 'ADIL SHAH M', 
+                password: '001089',
+                image: 'https://z-cdn-media.chatglm.cn/files/a485d095-256c-4cbd-a787-e49f8da104ce_1089.jpg?auth_key=1793237665-6dd226799835457aa025a8577270a49-0-95a756a7800e8ff7cf94996e1ce229c9'
+            },
+            '1084': { 
+                name: 'ASIM MOHAMED M', 
+                password: '001084',
+                image: 'https://z-cdn-media.chatglm.cn/files/18756586-7da3-4020-bd0d-73360f405a38_1084.jpg?auth_key=1793237665-d187256d571b4d7c9bae298b5a9dc57c-0-e569aedbb1ecd0481b29864ac3fbe8be'
+            },
+            '1024': { 
+                name: 'FADHIL KATTIPARUTHI', 
+                password: '001024',
+                image: 'https://z-cdn-media.chatglm.cn/files/e94c87ca-7ff6-47d7-9baf-1b09e96e6c1b_1024.jpg?auth_key=1793237664-aa2d2973248f42138831470683a86d13-0-0c24a9ae88f99aded9e8c40936e6be63'
+            },
+            '1008': { 
+                name: 'MUHAMMED MINHAJ', 
+                password: '001008',
+                image: 'https://z-cdn-media.chatglm.cn/files/ecbfd4cd-cc42-4f21-98fb-848f98473544_1008.jpg?auth_key=1793237664-b3365f25fa7a4d99a60cb9312798daeb-0-2651b0da3601fef244bbaccc73ab2647'
+            },
+            '1086': { 
+                name: 'MOHAMMED NIDAL', 
+                password: '001086',
+                image: 'https://z-cdn-media.chatglm.cn/files/16bc4e43-4c5d-4338-b232-51db8f9eac40_1086.jpg?auth_key=1793237665-58238f1775624e47b8a3b0733bf3bd04-0-7ef4afb50b846d0baa21b6a74f87a7f4'
+            },
+            '1085': { 
+                name: 'MUHAMMED NAFIH', 
+                password: '001085',
+                image: 'https://z-cdn-media.chatglm.cn/files/fa0dc7c3-faa0-4fb1-9957-926edebce265_1085.jpg?auth_key=1793237665-e2ed000d8de846e295d4d4a34c036d13-0-aed0e068458bd7188248d3fc569bb820'
+            },
+            '1014': { 
+                name: 'MURSHID MK', 
+                password: '001014',
+                image: 'https://ui-avatars.com/api/?name=MURSHID%20MK&background=random'
+            }
+        };
+
+        // Sample union transactions data
+        const unionTransactions = [
+            { id: 1, userId: '1050', userName: 'MUHAMMAD SINAN PC', type: 'income', amount: 2500, category: 'Salary', date: '2025-01-01', notes: 'Monthly salary' },
+            { id: 2, userId: '1070', userName: 'MUHAMMED MUSAMMIL B K', type: 'income', amount: 2200, category: 'Salary', date: '2025-01-02', notes: 'Monthly salary' },
+            { id: 3, userId: '1050', userName: 'MUHAMMAD SINAN PC', type: 'expense', amount: 300, category: 'Food', date: '2025-01-03', notes: 'Groceries' },
+            { id: 4, userId: '1074', userName: 'MUAD .M', type: 'income', amount: 2800, category: 'Freelance', date: '2025-01-04', notes: 'Project payment' },
+            { id: 5, userId: '1058', userName: 'MUHAMMED JALAL AT', type: 'expense', amount: 150, category: 'Transport', date: '2025-01-05', notes: 'Bus fare' },
+            { id: 6, userId: '1051', userName: 'MUHAMMAD HISHAM T', type: 'income', amount: 3000, category: 'Salary', date: '2025-01-06', notes: 'Monthly salary' },
+            { id: 7, userId: '1056', userName: 'MUHAMMED SHADIN N.M.', type: 'expense', amount: 200, category: 'Entertainment', date: '2025-01-07', notes: 'Movie tickets' },
+            { id: 8, userId: '1076', userName: 'MUHAMMED MINHAJ KK', type: 'income', amount: 2600, category: 'Salary', date: '2025-01-08', notes: 'Monthly salary' },
+            { id: 9, userId: '1071', userName: 'SAYYID MOHAMMAD ZUHAIR A K', type: 'expense', amount: 400, category: 'Housing', date: '2025-01-09', notes: 'Rent' },
+            { id: 10, userId: '1075', userName: 'MUHAMMED HASHIM P', type: 'income', amount: 2400, category: 'Freelance', date: '2025-01-10', notes: 'Consulting fee' },
+            { id: 11, userId: '1061', userName: 'ANSHID M P', type: 'expense', amount: 100, category: 'Healthcare', date: '2025-01-11', notes: 'Medicine' },
+            { id: 12, userId: '1072', userName: 'MOHAMMED SINAN TP', type: 'income', amount: 2900, category: 'Salary', date: '2025-01-12', notes: 'Monthly salary' },
+            { id: 13, userId: '1078', userName: 'MUHAMMED RABIEUE MK', type: 'expense', amount: 250, category: 'Food', date: '2025-01-13', notes: 'Restaurant' },
+            { id: 14, userId: '1088', userName: 'MOHAMMED NAEEM K', type: 'income', amount: 2700, category: 'Salary', date: '2025-01-14', notes: 'Monthly salary' },
+            { id: 15, userId: '1082', userName: 'MUHAMMED SANEEN', type: 'expense', amount: 180, category: 'Transport', date: '2025-01-15', notes: 'Fuel' },
+            { id: 16, userId: '1090', userName: 'MUHAMMED BASSAM', type: 'income', amount: 3100, category: 'Freelance', date: '2025-01-16', notes: 'Design project' },
+            { id: 17, userId: '1066', userName: 'HASHIM MOHAMMED K P', type: 'expense', amount: 350, category: 'Entertainment', date: '2025-01-17', notes: 'Concert' },
+            { id: 18, userId: '1063', userName: 'MOHAMMED RISHADH. T', type: 'income', amount: 2300, category: 'Salary', date: '2025-01-18', notes: 'Monthly salary' },
+            { id: 19, userId: '1073', userName: 'MUHAMMAD MUSTHAFA KK', type: 'expense', amount: 120, category: 'Healthcare', date: '2025-01-19', notes: 'Doctor visit' },
+            { id: 20, userId: '1068', userName: 'MUHAMMED UVAIS.EK', type: 'income', amount: 2800, category: 'Salary', date: '2025-01-20', notes: 'Monthly salary' }
+        ];
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set today's date as default
+            document.getElementById('transaction-date').valueAsDate = new Date();
+            
+            // Initialize charts
+            initializeCharts();
+            
+            // Check if user is logged in
+            checkAuthStatus();
+            
+            // Load saved data
+            loadTransactions();
+            updateDashboard();
+            
+            // Load union report data
+            loadUnionReport();
+            
+            // Check for dark mode preference
+            if (localStorage.getItem('darkMode') === 'true') {
+                document.body.classList.add('dark');
+                document.getElementById('theme-icon').classList.replace('fa-moon', 'fa-sun');
+            }
+            
+            // Add search and filter functionality for union report
+            document.getElementById('union-search').addEventListener('input', filterUnionTransactions);
+            document.getElementById('union-category-filter').addEventListener('change', filterUnionTransactions);
+            
+            // Add profile image upload functionality
+            document.getElementById('profile-image-upload').addEventListener('change', handleProfileImageUpload);
+        });
+
+        // Authentication functions
+        function checkAuthStatus() {
+            const currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
+                updateAuthUI(true);
+                loadUserProfile(currentUser);
+            } else {
+                updateAuthUI(false);
+            }
+        }
+
+        function updateAuthUI(isLoggedIn) {
+            const authButtons = document.getElementById('auth-buttons');
+            
+            if (isLoggedIn) {
+                const currentUser = localStorage.getItem('currentUser');
+                const userName = users[currentUser] ? users[currentUser].name : 'User';
+                
+                authButtons.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <span class="hidden md:inline">Welcome, ${userName}</span>
+                        <button onclick="logout()" class="bg-red-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-red-700 transition">
+                            <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                        </button>
+                    </div>
+                `;
+            } else {
+                authButtons.innerHTML = `
+                    <button onclick="showLoginModal()" class="bg-white text-teal-600 px-4 py-2 rounded-lg font-medium hover:bg-teal-100 transition">
+                        <i class="fas fa-sign-in-alt mr-2"></i>Login
+                    </button>
+                `;
+            }
+        }
+
+        function loadUserProfile(userId) {
+            if (users[userId]) {
+                document.getElementById('profile-admission').value = userId;
+                document.getElementById('profile-name').value = users[userId].name;
+                
+                // Get custom profile image if it exists
+                const customImage = localStorage.getItem(`profile-image-${userId}`);
+                const profileImage = customImage || users[userId].image;
+                
+                // Update welcome message on dashboard with profile image
+                const welcomeElement = document.getElementById('user-welcome');
+                if (welcomeElement) {
+                    welcomeElement.innerHTML = `
+                        <img src="${profileImage}" alt="${users[userId].name}" class="profile-image">
+                        <span>Welcome, ${users[userId].name}</span>
+                    `;
+                }
+                
+                // Update account page profile
+                document.getElementById('account-profile-image').src = profileImage;
+                document.getElementById('account-profile-name').textContent = users[userId].name;
+                document.getElementById('account-profile-id').textContent = `Admission No: ${userId}`;
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            updateAuthUI(false);
+            showPage('home');
+            showNotification('You have been logged out successfully', 'info');
+        }
+
+        function showLoginModal() {
+            document.getElementById('login-modal').classList.add('active');
+        }
+
+        function closeLoginModal() {
+            document.getElementById('login-modal').classList.remove('active');
+        }
+
+        // Page navigation
+        function showPage(pageId) {
+            // Check if user is logged in for protected pages
+            const protectedPages = ['dashboard', 'reports', 'account'];
+            if (protectedPages.includes(pageId) && !localStorage.getItem('currentUser')) {
+                showNotification('Please login to access this page', 'warning');
+                showLoginModal();
+                return;
+            }
+            
+            // Hide all pages
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => page.classList.remove('active'));
+            
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+            
+            // Update active nav button
+            const navButtons = document.querySelectorAll('.nav-btn');
+            navButtons.forEach(btn => btn.classList.remove('text-teal-200'));
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        // Dark mode toggle
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark');
+            const isDark = document.body.classList.contains('dark');
+            localStorage.setItem('darkMode', isDark);
+            
+            const icon = document.getElementById('theme-icon');
+            if (isDark) {
+                icon.classList.replace('fa-moon', 'fa-sun');
+            } else {
+                icon.classList.replace('fa-sun', 'fa-moon');
+            }
+        }
+
+        // Set theme explicitly
+        function setTheme(theme) {
+            if (theme === 'dark') {
+                document.body.classList.add('dark');
+                localStorage.setItem('darkMode', true);
+                document.getElementById('theme-icon').classList.replace('fa-moon', 'fa-sun');
+            } else {
+                document.body.classList.remove('dark');
+                localStorage.setItem('darkMode', false);
+                document.getElementById('theme-icon').classList.replace('fa-sun', 'fa-moon');
+            }
+        }
+
+        // Transaction management
+        let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+
+        document.getElementById('transaction-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const type = document.getElementById('transaction-type').value;
+            const amount = parseFloat(document.getElementById('transaction-amount').value);
+            const category = document.getElementById('transaction-category').value;
+            const date = document.getElementById('transaction-date').value;
+            const notes = document.getElementById('transaction-notes').value;
+            
+            const transaction = {
+                id: Date.now(),
+                type,
+                amount,
+                category,
+                date,
+                notes
+            };
+            
+            transactions.push(transaction);
+            saveTransactions();
+            updateDashboard();
+            updateTransactionsList();
+            
+            // Reset form
+            this.reset();
+            document.getElementById('transaction-date').valueAsDate = new Date();
+            
+            // Show success message
+            showNotification('Transaction added successfully!', 'success');
+        });
+
+        function saveTransactions() {
+            localStorage.setItem('transactions', JSON.stringify(transactions));
+        }
+
+        function loadTransactions() {
+            updateTransactionsList();
+        }
+
+        function refreshTransactions() {
+            // Reload transactions from localStorage
+            transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+            updateTransactionsList();
+            showNotification('Transaction list refreshed!', 'info');
+        }
+
+        function updateTransactionsList() {
+            const tbody = document.getElementById('transactions-list');
+            
+            if (transactions.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center py-8 text-gray-500">No transactions yet. Add your first transaction!</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = transactions.slice(-10).reverse().map(transaction => `
+                <tr class="transaction-row border-b">
+                    <td class="py-3">${formatDate(transaction.date)}</td>
+                    <td class="py-3">${transaction.notes || transaction.category}</td>
+                    <td class="py-3">
+                        <span class="px-2 py-1 rounded-full text-xs ${getCategoryColor(transaction.category)}">
+                            ${transaction.category}
+                        </span>
+                    </td>
+                    <td class="py-3 font-semibold ${transaction.type === 'income' ? 'text-green-600' : 'text-red-600'}">
+                        ${transaction.type === 'income' ? '+' : '-'}$${transaction.amount.toFixed(2)}
+                    </td>
+                    <td class="py-3">
+                        <button onclick="deleteTransaction(${transaction.id})" class="text-red-600 hover:text-red-800 transition">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function deleteTransaction(id) {
+            transactions = transactions.filter(t => t.id !== id);
+            saveTransactions();
+            updateDashboard();
+            updateTransactionsList();
+            showNotification('Transaction deleted', 'info');
+        }
+
+        function clearTransactions() {
+            if (confirm('Are you sure you want to delete all transactions?')) {
+                transactions = [];
+                saveTransactions();
+                updateDashboard();
+                updateTransactionsList();
+                showNotification('All transactions cleared', 'info');
+            }
+        }
+
+        function updateDashboard() {
+            // Calculate totals
+            const income = transactions
+                .filter(t => t.type === 'income')
+                .reduce((sum, t) => sum + t.amount, 0);
+                
+            const expenses = transactions
+                .filter(t => t.type === 'expense')
+                .reduce((sum, t) => sum + t.amount, 0);
+                
+            const balance = income - expenses;
+            
+            // Update UI
+            document.getElementById('total-income').textContent = income.toFixed(2);
+            document.getElementById('total-expenses').textContent = expenses.toFixed(2);
+            document.getElementById('current-balance').textContent = balance.toFixed(2);
+            
+            // Update charts
+            updateExpenseChart();
+            updateMonthlyChart();
+            
+            // Check budget alerts
+            checkBudgetAlerts(expenses);
+        }
+
+        function updateExpenseChart() {
+            const ctx = document.getElementById('expense-chart').getContext('2d');
+            
+            // Get expense data by category
+            const expensesByCategory = {};
+            transactions
+                .filter(t => t.type === 'expense')
+                .forEach(t => {
+                    expensesByCategory[t.category] = (expensesByCategory[t.category] || 0) + t.amount;
+                });
+            
+            const labels = Object.keys(expensesByCategory);
+            const data = Object.values(expensesByCategory);
+            
+            // Destroy previous chart if exists
+            if (window.expenseChart) {
+                window.expenseChart.destroy();
+            }
+            
+            window.expenseChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: [
+                            '#FF6384',
+                            '#36A2EB',
+                            '#FFCE56',
+                            '#4BC0C0',
+                            '#9966FF',
+                            '#FF9F40',
+                            '#8AC926',
+                            '#1982C4'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right'
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateMonthlyChart() {
+            const ctx = document.getElementById('monthly-chart').getContext('2d');
+            
+            // Group transactions by month
+            const monthlyData = {};
+            transactions.forEach(t => {
+                const month = t.date.substring(0, 7); // YYYY-MM
+                if (!monthlyData[month]) {
+                    monthlyData[month] = { income: 0, expense: 0 };
+                }
+                monthlyData[month][t.type] += t.amount;
+            });
+            
+            const sortedMonths = Object.keys(monthlyData).sort();
+            const incomeData = sortedMonths.map(m => monthlyData[m].income);
+            const expenseData = sortedMonths.map(m => monthlyData[m].expense);
+            
+            // Destroy previous chart if exists
+            if (window.monthlyChart) {
+                window.monthlyChart.destroy();
+            }
+            
+            window.monthlyChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: sortedMonths,
+                    datasets: [
+                        {
+                            label: 'Income',
+                            data: incomeData,
+                            backgroundColor: '#4CAF50'
+                        },
+                        {
+                            label: 'Expenses',
+                            data: expenseData,
+                            backgroundColor: '#F44336'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function checkBudgetAlerts(expenses) {
+            const budgetLimit = parseFloat(localStorage.getItem('budgetLimit')) || 0;
+            const alertsEnabled = localStorage.getItem('budgetAlerts') === 'true';
+            
+            if (alertsEnabled && budgetLimit > 0 && expenses > budgetLimit) {
+                showNotification(`Budget alert! You've exceeded your $${budgetLimit} monthly limit.`, 'warning');
+            }
+        }
+
+        // Union Report Functions
+        function loadUnionReport() {
+            // Calculate union totals
+            const income = unionTransactions
+                .filter(t => t.type === 'income')
+                .reduce((sum, t) => sum + t.amount, 0);
+                
+            const expenses = unionTransactions
+                .filter(t => t.type === 'expense')
+                .reduce((sum, t) => sum + t.amount, 0);
+                
+            const balance = income - expenses;
+            
+            // Update home page overview
+            document.getElementById('union-income').textContent = income.toFixed(2);
+            document.getElementById('union-expenses').textContent = expenses.toFixed(2);
+            document.getElementById('union-balance').textContent = balance.toFixed(2);
+            
+            // Update union report page
+            document.getElementById('union-report-income').textContent = income.toFixed(2);
+            document.getElementById('union-report-expenses').textContent = expenses.toFixed(2);
+            document.getElementById('union-report-balance').textContent = balance.toFixed(2);
+            
+            // Generate insights
+            generateUnionInsights(unionTransactions, income, expenses);
+            
+            // Update transactions table
+            updateUnionTransactionsList(unionTransactions);
+        }
+
+        function generateUnionInsights(transactions, income, expenses) {
+            const insights = [];
+            
+            // Highest spending category
+            const expensesByCategory = {};
+            transactions
+                .filter(t => t.type === 'expense')
+                .forEach(t => {
+                    expensesByCategory[t.category] = (expensesByCategory[t.category] || 0) + t.amount;
+                });
+            
+            const highestCategory = Object.entries(expensesByCategory)
+                .sort((a, b) => b[1] - a[1])[0];
+            
+            if (highestCategory) {
+                insights.push(`The highest spending category is <strong>${highestCategory[0]}</strong> at $${highestCategory[1].toFixed(2)}`);
+            }
+            
+            // Average transaction
+            if (transactions.length > 0) {
+                const avgExpense = expenses / transactions.filter(t => t.type === 'expense').length;
+                insights.push(`Average expense: $${avgExpense.toFixed(2)}`);
+            }
+            
+            // Savings rate
+            if (income > 0) {
+                const savingsRate = ((income - expenses) / income * 100).toFixed(1);
+                insights.push(`Union savings rate: <strong>${savingsRate}%</strong>`);
+            }
+            
+            // Number of users
+            const uniqueUsers = new Set(transactions.map(t => t.userId)).size;
+            insights.push(`Total users: <strong>${uniqueUsers}</strong>`);
+            
+            // Update UI
+            const container = document.getElementById('union-insights-container');
+            if (insights.length > 0) {
+                container.innerHTML = insights.map(insight => 
+                    `<div class="p-3 bg-gray-50 rounded-lg">${insight}</div>`
+                ).join('');
+            } else {
+                container.innerHTML = '<p class="text-gray-600">No insights available</p>';
+            }
+        }
+
+        function updateUnionTransactionsList(transactionList) {
+            const tbody = document.getElementById('union-transactions-list');
+            
+            if (transactionList.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center py-8 text-gray-500">No transactions found</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = transactionList.map(transaction => `
+                <tr class="transaction-row border-b">
+                    <td class="py-3">${formatDate(transaction.date)}</td>
+                    <td class="py-3">
+                        <div class="flex items-center space-x-2">
+                            ${users[transaction.userId] ? 
+                                `<img src="${users[transaction.userId].image}" alt="${transaction.userName}" class="profile-image">` : 
+                                `<div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-xs text-gray-600">
+                                    ${transaction.userName.charAt(0)}
+                                </div>`
+                            }
+                            <span>${transaction.userName}</span>
+                        </div>
+                    </td>
+                    <td class="py-3">${transaction.notes || transaction.category}</td>
+                    <td class="py-3">
+                        <span class="px-2 py-1 rounded-full text-xs ${getCategoryColor(transaction.category)}">
+                            ${transaction.category}
+                        </span>
+                    </td>
+                    <td class="py-3">
+                        <span class="px-2 py-1 rounded-full text-xs ${transaction.type === 'income' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                            ${transaction.type}
+                        </span>
+                    </td>
+                    <td class="py-3 font-semibold ${transaction.type === 'income' ? 'text-green-600' : 'text-red-600'}">
+                        ${transaction.type === 'income' ? '+' : '-'}$${transaction.amount.toFixed(2)}
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function filterUnionTransactions() {
+            const searchTerm = document.getElementById('union-search').value.toLowerCase();
+            const categoryFilter = document.getElementById('union-category-filter').value;
+            
+            let filtered = unionTransactions;
+            
+            if (searchTerm) {
+                filtered = filtered.filter(t => 
+                    t.userName.toLowerCase().includes(searchTerm) ||
+                    (t.notes && t.notes.toLowerCase().includes(searchTerm)) ||
+                    t.category.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            if (categoryFilter !== 'all') {
+                filtered = filtered.filter(t => t.category === categoryFilter);
+            }
+            
+            updateUnionTransactionsList(filtered);
+        }
+
+        function exportUnionToCSV() {
+            let csv = 'Date,User,Description,Category,Type,Amount\n';
+            
+            unionTransactions.forEach(t => {
+                csv += `${t.date},${t.userName},"${t.notes || t.category}",${t.category},${t.type},${t.amount}\n`;
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'flowledge-union-report.csv';
+            a.click();
+            
+            showNotification('Union report CSV exported successfully!', 'success');
+        }
+
+        function exportUnionToPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Add title
+            doc.setFontSize(20);
+            doc.text('FlowLedge Union Financial Report', 105, 15, { align: 'center' });
+            
+            // Add date
+            doc.setFontSize(12);
+            doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 105, 25, { align: 'center' });
+            
+            // Calculate totals
+            const income = unionTransactions
+                .filter(t => t.type === 'income')
+                .reduce((sum, t) => sum + t.amount, 0);
+                
+            const expenses = unionTransactions
+                .filter(t => t.type === 'expense')
+                .reduce((sum, t) => sum + t.amount, 0);
+                
+            const balance = income - expenses;
+            
+            // Add summary
+            doc.setFontSize(14);
+            doc.text('Union Financial Summary', 20, 50);
+            doc.setFontSize(12);
+            doc.text(`Total Income: $${income.toFixed(2)}`, 20, 60);
+            doc.text(`Total Expenses: $${expenses.toFixed(2)}`, 20, 70);
+            doc.text(`Net Balance: $${balance.toFixed(2)}`, 20, 80);
+            
+            // Add transactions table
+            const tableData = unionTransactions.map(t => [
+                formatDate(t.date),
+                t.userName,
+                t.category,
+                t.type,
+                `$${t.amount.toFixed(2)}`,
+                t.notes || ''
+            ]);
+            
+            doc.autoTable({
+                head: [['Date', 'User', 'Category', 'Type', 'Amount', 'Notes']],
+                body: tableData,
+                startY: 90,
+                theme: 'grid'
+            });
+            
+            // Save the PDF
+            doc.save('flowledge-union-report.pdf');
+            
+            showNotification('Union report PDF exported successfully!', 'success');
+        }
+
+        // Reports functionality
+        function generateReport() {
+            const fromDate = document.getElementById('report-from').value;
+            const toDate = document.getElementById('report-to').value;
+            const category = document.getElementById('report-category').value;
+            
+            // Filter transactions
+            let filtered = transactions;
+            
+            if (fromDate) {
+                filtered = filtered.filter(t => t.date >= fromDate);
+            }
+            
+            if (toDate) {
+                filtered = filtered.filter(t => t.date <= toDate);
+            }
+            
+            if (category !== 'all') {
+                filtered = filtered.filter(t => t.category === category);
+            }
+            
+            // Calculate totals
+            const income = filtered
+                .filter(t => t.type === 'income')
+                .reduce((sum, t) => sum + t.amount, 0);
+                
+            const expenses = filtered
+                .filter(t => t.type === 'expense')
+                .reduce((sum, t) => sum + t.amount, 0);
+                
+            const balance = income - expenses;
+            
+            // Update UI
+            document.getElementById('report-income').textContent = income.toFixed(2);
+            document.getElementById('report-expenses').textContent = expenses.toFixed(2);
+            document.getElementById('report-balance').textContent = balance.toFixed(2);
+            
+            // Generate insights
+            generateInsights(filtered, income, expenses);
+            
+            showNotification('Report generated successfully!', 'success');
+        }
+
+        function generateInsights(transactions, income, expenses) {
+            const insights = [];
+            
+            // Highest spending category
+            const expensesByCategory = {};
+            transactions
+                .filter(t => t.type === 'expense')
+                .forEach(t => {
+                    expensesByCategory[t.category] = (expensesByCategory[t.category] || 0) + t.amount;
+                });
+            
+            const highestCategory = Object.entries(expensesByCategory)
+                .sort((a, b) => b[1] - a[1])[0];
+            
+            if (highestCategory) {
+                insights.push(`Your highest spending category is <strong>${highestCategory[0]}</strong> at $${highestCategory[1].toFixed(2)}`);
+            }
+            
+            // Average transaction
+            if (transactions.length > 0) {
+                const avgExpense = expenses / transactions.filter(t => t.type === 'expense').length;
+                insights.push(`Average expense: $${avgExpense.toFixed(2)}`);
+            }
+            
+            // Savings rate
+            if (income > 0) {
+                const savingsRate = ((income - expenses) / income * 100).toFixed(1);
+                insights.push(`Your savings rate is <strong>${savingsRate}%</strong>`);
+            }
+            
+            // Update UI
+            const container = document.getElementById('insights-container');
+            if (insights.length > 0) {
+                container.innerHTML = insights.map(insight => 
+                    `<div class="p-3 bg-gray-50 rounded-lg">${insight}</div>`
+                ).join('');
+            } else {
+                container.innerHTML = '<p class="text-gray-600">No insights available for the selected filters</p>';
+            }
+        }
+
+        function exportToCSV() {
+            let csv = 'Date,Type,Category,Amount,Notes\n';
+            
+            transactions.forEach(t => {
+                csv += `${t.date},${t.type},${t.category},${t.amount},"${t.notes || ''}"\n`;
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'flowledge-transactions.csv';
+            a.click();
+            
+            showNotification('CSV exported successfully!', 'success');
+        }
+
+        function exportToPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Add title
+            doc.setFontSize(20);
+            doc.text('FlowLedge Financial Report', 105, 15, { align: 'center' });
+            
+            // Add date
+            doc.setFontSize(12);
+            doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 105, 25, { align: 'center' });
+            
+            // Add user info
+            const currentUser = localStorage.getItem('currentUser');
+            if (currentUser && users[currentUser]) {
+                doc.text(`User: ${users[currentUser].name} (${currentUser})`, 105, 35, { align: 'center' });
+            }
+            
+            // Add summary
+            const income = transactions
+                .filter(t => t.type === 'income')
+                .reduce((sum, t) => sum + t.amount, 0);
+                
+            const expenses = transactions
+                .filter(t => t.type === 'expense')
+                .reduce((sum, t) => sum + t.amount, 0);
+                
+            const balance = income - expenses;
+            
+            doc.setFontSize(14);
+            doc.text('Financial Summary', 20, 50);
+            doc.setFontSize(12);
+            doc.text(`Total Income: $${income.toFixed(2)}`, 20, 60);
+            doc.text(`Total Expenses: $${expenses.toFixed(2)}`, 20, 70);
+            doc.text(`Net Balance: $${balance.toFixed(2)}`, 20, 80);
+            
+            // Add transactions table
+            const tableData = transactions.map(t => [
+                formatDate(t.date),
+                t.type,
+                t.category,
+                `$${t.amount.toFixed(2)}`,
+                t.notes || ''
+            ]);
+            
+            doc.autoTable({
+                head: [['Date', 'Type', 'Category', 'Amount', 'Notes']],
+                body: tableData,
+                startY: 90,
+                theme: 'grid'
+            });
+            
+            // Save the PDF
+            doc.save('flowledge-report.pdf');
+            
+            showNotification('PDF exported successfully!', 'success');
+        }
+
+        // Account management
+        document.getElementById('profile-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('profile-name').value;
+            const email = document.getElementById('profile-email').value;
+            const password = document.getElementById('profile-password').value;
+            
+            // Save to localStorage (in a real app, this would be sent to a server)
+            localStorage.setItem('userName', name);
+            localStorage.setItem('userEmail', email);
+            
+            showNotification('Profile updated successfully!', 'success');
+        });
+
+        document.getElementById('currency').addEventListener('change', function() {
+            localStorage.setItem('currency', this.value);
+            showNotification('Currency updated!', 'success');
+        });
+
+        document.getElementById('budget-alerts').addEventListener('change', function() {
+            localStorage.setItem('budgetAlerts', this.checked);
+        });
+
+        document.getElementById('budget-limit').addEventListener('change', function() {
+            localStorage.setItem('budgetLimit', this.value);
+        });
+
+        // Data management
+        function exportData() {
+            const data = {
+                transactions,
+                settings: {
+                    currency: localStorage.getItem('currency') || 'USD',
+                    budgetAlerts: localStorage.getItem('budgetAlerts') === 'true',
+                    budgetLimit: localStorage.getItem('budgetLimit') || 0,
+                    darkMode: localStorage.getItem('darkMode') === 'true'
+                },
+                profile: {
+                    name: localStorage.getItem('userName') || '',
+                    email: localStorage.getItem('userEmail') || ''
+                }
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'flowledge-backup.json';
+            a.click();
+            
+            showNotification('Data exported successfully!', 'success');
+        }
+
+        document.getElementById('import-file').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    // Validate data
+                    if (data.transactions && Array.isArray(data.transactions)) {
+                        transactions = data.transactions;
+                        saveTransactions();
+                        updateDashboard();
+                        updateTransactionsList();
+                        
+                        // Restore settings
+                        if (data.settings) {
+                            if (data.settings.currency) localStorage.setItem('currency', data.settings.currency);
+                            if (data.settings.budgetAlerts !== undefined) localStorage.setItem('budgetAlerts', data.settings.budgetAlerts);
+                            if (data.settings.budgetLimit !== undefined) localStorage.setItem('budgetLimit', data.settings.budgetLimit);
+                            if (data.settings.darkMode !== undefined) localStorage.setItem('darkMode', data.settings.darkMode);
+                        }
+                        
+                        // Restore profile
+                        if (data.profile) {
+                            if (data.profile.name) localStorage.setItem('userName', data.profile.name);
+                            if (data.profile.email) localStorage.setItem('userEmail', data.profile.email);
+                        }
+                        
+                        showNotification('Data imported successfully!', 'success');
+                    } else {
+                        showNotification('Invalid data format', 'error');
+                    }
+                } catch (error) {
+                    showNotification('Error importing data', 'error');
+                }
+            };
+            reader.readAsText(file);
+        });
+
+        // Profile image upload
+        function handleProfileImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            // Check if file is an image
+            if (!file.type.match('image.*')) {
+                showNotification('Please select an image file', 'error');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const currentUser = localStorage.getItem('currentUser');
+                if (currentUser) {
+                    // Save the image to localStorage
+                    localStorage.setItem(`profile-image-${currentUser}`, e.target.result);
+                    
+                    // Update the profile image display
+                    document.getElementById('account-profile-image').src = e.target.result;
+                    
+                    // Update the dashboard profile image
+                    const welcomeElement = document.getElementById('user-welcome');
+                    if (welcomeElement) {
+                        const imgElement = welcomeElement.querySelector('img');
+                        if (imgElement) {
+                            imgElement.src = e.target.result;
+                        }
+                    }
+                    
+                    showNotification('Profile image updated successfully!', 'success');
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Login functionality
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+            
+            // Check if user exists and password matches
+            if (users[username] && users[username].password === password) {
+                // Set current user
+                localStorage.setItem('currentUser', username);
+                
+                // Update UI
+                updateAuthUI(true);
+                loadUserProfile(username);
+                
+                // Close modal
+                closeLoginModal();
+                
+                // Show success message
+                showNotification('Login successful! Welcome back.', 'success');
+                
+                // Redirect to dashboard
+                setTimeout(() => showPage('dashboard'), 1000);
+            } else {
+                showNotification('Invalid username or password', 'error');
+            }
+        });
+
+        // Utility functions
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString(undefined, options);
+        }
+
+        function getCategoryColor(category) {
+            const colors = {
+                'Food': 'bg-yellow-100 text-yellow-800',
+                'Transport': 'bg-blue-100 text-blue-800',
+                'Housing': 'bg-purple-100 text-purple-800',
+                'Entertainment': 'bg-pink-100 text-pink-800',
+                'Healthcare': 'bg-red-100 text-red-800',
+                'Salary': 'bg-green-100 text-green-800',
+                'Freelance': 'bg-teal-100 text-teal-800',
+                'Other': 'bg-gray-100 text-gray-800'
+            };
+            return colors[category] || 'bg-gray-100 text-gray-800';
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 ${
+                type === 'success' ? 'bg-green-500' : 
+                type === 'error' ? 'bg-red-500' : 
+                type === 'warning' ? 'bg-yellow-500' : 'bg-blue-500'
+            } text-white`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transition = 'opacity 0.5s';
+                setTimeout(() => notification.remove(), 500);
+            }, 3000);
+        }
+
+        function initializeCharts() {
+            // Initialize empty charts
+            updateExpenseChart();
+            updateMonthlyChart();
+        }
+    </script>
+</body>
+</html>
