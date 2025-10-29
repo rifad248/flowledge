@@ -87,7 +87,7 @@
                 
                 <div>
                     <label class="block text-gray-700 mb-2">Password</label>
-                    <input type="password" id="login-password" placeholder="Enter your password" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent" required>
+                    <input type="password" id="login-password" placeholder="passeord eg : user 1040 password is "001040"" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent" required>
                 </div>
                 
                 <div class="flex items-center justify-between">
@@ -368,14 +368,9 @@
             <div class="bg-white rounded-xl shadow-md p-6 mb-8">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-xl font-bold">Recent Transactions</h2>
-                    <div class="flex space-x-2">
-                        <button onclick="refreshTransactions()" class="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition">
-                            <i class="fas fa-sync-alt mr-1"></i> Refresh
-                        </button>
-                        <button onclick="clearTransactions()" class="text-red-600 hover:text-red-800 transition px-4 py-2 rounded-lg border border-red-200">
-                            <i class="fas fa-trash-alt mr-1"></i> Clear All
-                        </button>
-                    </div>
+                    <button onclick="clearTransactions()" class="text-red-600 hover:text-red-800 transition">
+                        <i class="fas fa-trash-alt mr-1"></i> Clear All
+                    </button>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full">
@@ -481,13 +476,7 @@
                 <div class="bg-white rounded-xl shadow-md p-6">
                     <h2 class="text-xl font-bold mb-6">Profile Information</h2>
                     <div class="flex flex-col items-center mb-6">
-                        <div class="relative mb-4">
-                            <img id="account-profile-image" src="" alt="Profile" class="large-profile-image">
-                            <label for="profile-image-upload" class="absolute bottom-0 right-0 bg-teal-600 text-white p-2 rounded-full cursor-pointer hover:bg-teal-700 transition">
-                                <i class="fas fa-camera"></i>
-                            </label>
-                            <input type="file" id="profile-image-upload" class="hidden" accept="image/*">
-                        </div>
+                        <img id="account-profile-image" src="" alt="Profile" class="large-profile-image mb-4">
                         <h3 id="account-profile-name" class="text-xl font-semibold"></h3>
                         <p id="account-profile-id" class="text-gray-600"></p>
                     </div>
@@ -889,9 +878,6 @@
             // Add search and filter functionality for union report
             document.getElementById('union-search').addEventListener('input', filterUnionTransactions);
             document.getElementById('union-category-filter').addEventListener('change', filterUnionTransactions);
-            
-            // Add profile image upload functionality
-            document.getElementById('profile-image-upload').addEventListener('change', handleProfileImageUpload);
         });
 
         // Authentication functions
@@ -934,21 +920,17 @@
                 document.getElementById('profile-admission').value = userId;
                 document.getElementById('profile-name').value = users[userId].name;
                 
-                // Get custom profile image if it exists
-                const customImage = localStorage.getItem(`profile-image-${userId}`);
-                const profileImage = customImage || users[userId].image;
-                
                 // Update welcome message on dashboard with profile image
                 const welcomeElement = document.getElementById('user-welcome');
                 if (welcomeElement) {
                     welcomeElement.innerHTML = `
-                        <img src="${profileImage}" alt="${users[userId].name}" class="profile-image">
+                        <img src="${users[userId].image}" alt="${users[userId].name}" class="profile-image">
                         <span>Welcome, ${users[userId].name}</span>
                     `;
                 }
                 
                 // Update account page profile
-                document.getElementById('account-profile-image').src = profileImage;
+                document.getElementById('account-profile-image').src = users[userId].image;
                 document.getElementById('account-profile-name').textContent = users[userId].name;
                 document.getElementById('account-profile-id').textContent = `Admission No: ${userId}`;
             }
@@ -1061,13 +1043,6 @@
 
         function loadTransactions() {
             updateTransactionsList();
-        }
-
-        function refreshTransactions() {
-            // Reload transactions from localStorage
-            transactions = JSON.parse(localStorage.getItem('transactions')) || [];
-            updateTransactionsList();
-            showNotification('Transaction list refreshed!', 'info');
         }
 
         function updateTransactionsList() {
@@ -1711,42 +1686,6 @@
             };
             reader.readAsText(file);
         });
-
-        // Profile image upload
-        function handleProfileImageUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            // Check if file is an image
-            if (!file.type.match('image.*')) {
-                showNotification('Please select an image file', 'error');
-                return;
-            }
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const currentUser = localStorage.getItem('currentUser');
-                if (currentUser) {
-                    // Save the image to localStorage
-                    localStorage.setItem(`profile-image-${currentUser}`, e.target.result);
-                    
-                    // Update the profile image display
-                    document.getElementById('account-profile-image').src = e.target.result;
-                    
-                    // Update the dashboard profile image
-                    const welcomeElement = document.getElementById('user-welcome');
-                    if (welcomeElement) {
-                        const imgElement = welcomeElement.querySelector('img');
-                        if (imgElement) {
-                            imgElement.src = e.target.result;
-                        }
-                    }
-                    
-                    showNotification('Profile image updated successfully!', 'success');
-                }
-            };
-            reader.readAsDataURL(file);
-        }
 
         // Login functionality
         document.getElementById('login-form').addEventListener('submit', function(e) {
