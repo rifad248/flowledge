@@ -9,45 +9,328 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        .dark { background-color: #1a202c; color: #e2e8f0; }
-        .dark .bg-white { background-color: #2d3748; }
-        .dark .bg-gray-50 { background-color: #2d3748; }
-        .dark .bg-gray-100 { background-color: #374151; }
-        .dark .text-gray-700 { color: #e2e8f0; }
-        .dark .text-gray-600 { color: #cbd5e0; }
-        .dark .border-gray-200 { border-color: #4a5568; }
-        .dark .border-gray-300 { border-color: #4a5568; }
-        .dark .hover\:bg-gray-100:hover { background-color: #374151; }
-        .page { display: none; }
-        .page.active { display: block; }
-        .transaction-row:hover { background-color: rgba(0,0,0,0.05); }
-        .dark .transaction-row:hover { background-color: rgba(255,255,255,0.05); }
-        .goal-progress { transition: width 0.5s ease-in-out; }
-        .fade-in { animation: fadeIn 0.3s ease-in; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .modal { display: none; position: fixed; z-index: 50; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); }
-        .modal.active { display: flex; align-items: center; justify-content: center; }
-        .profile-image { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
-        .large-profile-image { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .dark { 
+            background-color: #1a202c; 
+            color: #e2e8f0; 
+        }
+        
+        .dark .bg-white { 
+            background-color: #2d3748; 
+        }
+        
+        .dark .bg-gray-50 { 
+            background-color: #2d3748; 
+        }
+        
+        .dark .bg-gray-100 { 
+            background-color: #374151; 
+        }
+        
+        .dark .text-gray-700 { 
+            color: #e2e8f0; 
+        }
+        
+        .dark .text-gray-600 { 
+            color: #cbd5e0; 
+        }
+        
+        .dark .border-gray-200 { 
+            border-color: #4a5568; 
+        }
+        
+        .dark .border-gray-300 { 
+            border-color: #4a5568; 
+        }
+        
+        .dark .hover\:bg-gray-100:hover { 
+            background-color: #374151; 
+        }
+        
+        .page { 
+            display: none; 
+        }
+        
+        .page.active { 
+            display: block; 
+        }
+        
+        .transaction-row:hover { 
+            background-color: rgba(0,0,0,0.05); 
+        }
+        
+        .dark .transaction-row:hover { 
+            background-color: rgba(255,255,255,0.05); 
+        }
+        
+        .goal-progress { 
+            transition: width 0.5s ease-in-out; 
+        }
+        
+        .fade-in { 
+            animation: fadeIn 0.3s ease-in; 
+        }
+        
+        @keyframes fadeIn { 
+            from { opacity: 0; } to { opacity: 1; } 
+        }
+        
+        .modal { 
+            display: none; 
+            position: fixed; 
+            z-index: 50; 
+            left: 0; 
+            top: 0; 
+            width: 100%; 
+            height: 100%; 
+            background-color: rgba(0,0,0,0.5); 
+        }
+        
+        .modal.active { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+        }
+        
+        .profile-image { 
+            width: 40px; 
+            height: 40px; 
+            border-radius: 50%; 
+            object-fit: cover; 
+        }
+        
+        .large-profile-image { 
+            width: 100px; 
+            height: 100px; 
+            border-radius: 50%; 
+            object-fit: cover; 
+        }
+        
+        /* New styles */
+        .nav-link {
+            position: relative;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: #f0fdfa;
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .card {
+            background: linear-gradient(to bottom right, #f0fdfa, #ccfbf1);
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .dark .card {
+            background: linear-gradient(to bottom right, #2d3748, #374151);
+        }
+        
+        .insight-card {
+            transition: all 0.3s ease;
+        }
+        
+        .insight-card:hover {
+            transform: translateX(5px);
+        }
+        
+        .btn-export {
+            border-radius: 8px;
+            font-weight: 500;
+            padding: 10px 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-csv {
+            background-color: #0ea5e9;
+            color: white;
+        }
+        
+        .btn-csv:hover {
+            background-color: #0284c7;
+        }
+        
+        .btn-pdf {
+            background-color: #dc2626;
+            color: white;
+        }
+        
+        .btn-pdf:hover {
+            background-color: #b91c1c;
+        }
+        
+        .loading-spinner {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .loading-spinner.active {
+            display: flex;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid #14b8a6;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .progress-bar {
+            height: 6px;
+            background-color: #e5e7eb;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: #14b8a6;
+            border-radius: 3px;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.success {
+            background-color: #10b981;
+        }
+        
+        .notification.error {
+            background-color: #ef4444;
+        }
+        
+        .notification.warning {
+            background-color: #f59e0b;
+        }
+        
+        .notification.info {
+            background-color: #3b82f6;
+        }
+        
+        .profile-dropdown {
+            position: relative;
+        }
+        
+        .profile-dropdown-menu {
+            position: absolute;
+            right: 0;
+            top: 100%;
+            margin-top: 10px;
+            width: 200px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            z-index: 50;
+            display: none;
+        }
+        
+        .profile-dropdown-menu.active {
+            display: block;
+        }
+        
+        .dark .profile-dropdown-menu {
+            background-color: #2d3748;
+        }
+        
+        .profile-dropdown-item {
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            color: #4b5563;
+            transition: background-color 0.2s;
+        }
+        
+        .profile-dropdown-item:hover {
+            background-color: #f3f4f6;
+        }
+        
+        .dark .profile-dropdown-item {
+            color: #e2e8f0;
+        }
+        
+        .dark .profile-dropdown-item:hover {
+            background-color: #374151;
+        }
+        
+        .mini-chart {
+            height: 40px;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans">
+    <!-- Loading Spinner -->
+    <div id="loading-spinner" class="loading-spinner">
+        <div class="bg-white p-6 rounded-xl shadow-lg text-center">
+            <div class="spinner mx-auto mb-4"></div>
+            <p class="text-gray-700">Processing your request...</p>
+        </div>
+    </div>
+
     <!-- Navigation -->
-    <nav class="bg-teal-600 text-white shadow-lg">
+    <nav class="bg-gradient-to-r from-teal-600 to-teal-700 text-white shadow-lg">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center space-x-2">
-                <i class="fas fa-wallet text-2xl"></i>
+                <i class="fas fa-chart-line text-2xl"></i>
                 <h1 class="text-xl font-bold">FlowLedge</h1>
             </div>
             
             <div class="hidden md:flex space-x-6">
-                <button onclick="showPage('home')" class="nav-btn hover:text-teal-200 transition">Home</button>
-                <button onclick="showPage('union-report')" class="nav-btn hover:text-teal-200 transition">Union Report</button>
-                <button onclick="showPage('dashboard')" class="nav-btn hover:text-teal-200 transition">Dashboard</button>
-                <button onclick="showPage('reports')" class="nav-btn hover:text-teal-200 transition">Reports</button>
-                <button onclick="showPage('account')" class="nav-btn hover:text-teal-200 transition">Account</button>
-                <button onclick="showPage('about')" class="nav-btn hover:text-teal-200 transition">About</button>
+                <button onclick="showPage('home')" class="nav-link nav-btn hover:text-teal-200 transition">Home</button>
+                <button onclick="showPage('union-report')" class="nav-link nav-btn hover:text-teal-200 transition">Union Report</button>
+                <button onclick="showPage('dashboard')" class="nav-link nav-btn hover:text-teal-200 transition">Dashboard</button>
+                <button onclick="showPage('reports')" class="nav-link nav-btn hover:text-teal-200 transition">Reports</button>
+                <button onclick="showPage('account')" class="nav-link nav-btn hover:text-teal-200 transition">Account</button>
+                <button onclick="showPage('about')" class="nav-link nav-btn hover:text-teal-200 transition">About</button>
             </div>
             
             <div class="flex items-center space-x-4">
@@ -135,7 +418,7 @@
             </div>
 
             <div class="grid md:grid-cols-3 gap-8 mb-16">
-                <div class="bg-white p-6 rounded-xl shadow-md text-center hover:shadow-lg transition">
+                <div class="card p-6 text-center">
                     <div class="bg-teal-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                         <i class="fas fa-chart-line text-teal-600 text-2xl"></i>
                     </div>
@@ -143,7 +426,7 @@
                     <p class="text-gray-600">Monitor income, expenses, and savings in one place</p>
                 </div>
                 
-                <div class="bg-white p-6 rounded-xl shadow-md text-center hover:shadow-lg transition">
+                <div class="card p-6 text-center">
                     <div class="bg-teal-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                         <i class="fas fa-chart-pie text-teal-600 text-2xl"></i>
                     </div>
@@ -151,7 +434,7 @@
                     <p class="text-gray-600">Visual reports show where your money goes</p>
                 </div>
                 
-                <div class="bg-white p-6 rounded-xl shadow-md text-center hover:shadow-lg transition">
+                <div class="card p-6 text-center">
                     <div class="bg-teal-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                         <i class="fas fa-piggy-bank text-teal-600 text-2xl"></i>
                     </div>
@@ -160,7 +443,7 @@
                 </div>
             </div>
 
-            <div class="bg-white rounded-xl shadow-md p-8 mb-12">
+            <div class="card p-8 mb-12">
                 <h2 class="text-2xl font-bold mb-6 text-center">Union Financial Overview</h2>
                 <div class="grid md:grid-cols-3 gap-6">
                     <div class="bg-teal-50 p-6 rounded-lg text-center">
@@ -188,7 +471,7 @@
         <div id="union-report" class="page fade-in">
             <h1 class="text-3xl font-bold mb-8 text-teal-700">Union Financial Report</h1>
             
-            <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+            <div class="card p-6 mb-8">
                 <div class="grid md:grid-cols-3 gap-6 mb-8">
                     <div class="bg-teal-50 p-6 rounded-lg text-center">
                         <p class="text-gray-600">Total Income</p>
@@ -212,16 +495,16 @@
                 </div>
                 
                 <div class="flex justify-end space-x-4 mb-6">
-                    <button onclick="exportUnionToCSV()" class="bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-700 transition">
+                    <button onclick="exportUnionToCSV()" class="btn-export btn-csv text-white flex items-center">
                         <i class="fas fa-file-csv mr-2"></i>Export CSV
                     </button>
-                    <button onclick="exportUnionToPDF()" class="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-700 transition">
+                    <button onclick="exportUnionToPDF()" class="btn-export btn-pdf text-white flex items-center">
                         <i class="fas fa-file-pdf mr-2"></i>Export PDF
                     </button>
                 </div>
             </div>
             
-            <div class="bg-white rounded-xl shadow-md p-6">
+            <div class="card p-6">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-xl font-bold">All Transactions</h2>
                     <div class="flex space-x-2">
@@ -268,7 +551,7 @@
             
             <!-- Balance Overview -->
             <div class="grid md:grid-cols-3 gap-6 mb-8">
-                <div class="bg-white p-6 rounded-xl shadow-md">
+                <div class="card p-6">
                     <div class="flex justify-between items-center">
                         <div>
                             <p class="text-gray-600">Total Income</p>
@@ -280,7 +563,7 @@
                     </div>
                 </div>
                 
-                <div class="bg-white p-6 rounded-xl shadow-md">
+                <div class="card p-6">
                     <div class="flex justify-between items-center">
                         <div>
                             <p class="text-gray-600">Total Expenses</p>
@@ -292,7 +575,7 @@
                     </div>
                 </div>
                 
-                <div class="bg-white p-6 rounded-xl shadow-md">
+                <div class="card p-6">
                     <div class="flex justify-between items-center">
                         <div>
                             <p class="text-gray-600">Current Balance</p>
@@ -307,7 +590,7 @@
 
             <div class="grid md:grid-cols-2 gap-8 mb-8">
                 <!-- Add Transaction Form -->
-                <div class="bg-white p-6 rounded-xl shadow-md">
+                <div class="card p-6">
                     <h2 class="text-xl font-bold mb-4">Add Transaction</h2>
                     <form id="transaction-form" class="space-y-4">
                         <div>
@@ -352,7 +635,7 @@
                 </div>
                 
                 <!-- Expense Chart -->
-                <div class="bg-white p-6 rounded-xl shadow-md">
+                <div class="card p-6">
                     <h2 class="text-xl font-bold mb-4">Expense Breakdown</h2>
                     <div class="h-64">
                         <canvas id="expense-chart"></canvas>
@@ -361,7 +644,7 @@
             </div>
 
             <!-- Recent Transactions -->
-            <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+            <div class="card p-6 mb-8">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-xl font-bold">Recent Transactions</h2>
                     <button onclick="clearTransactions()" class="text-red-600 hover:text-red-800 transition">
@@ -393,8 +676,17 @@
         <div id="reports" class="page fade-in">
             <h1 class="text-3xl font-bold mb-8 text-teal-700">Financial Reports</h1>
             
-            <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+            <div class="card p-6 mb-8">
                 <div class="flex flex-wrap gap-4 mb-6">
+                    <div>
+                        <label class="block text-gray-700 mb-2">Time Range</label>
+                        <select id="report-time-range" class="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent">
+                            <option value="all">All Time</option>
+                            <option value="this-month">This Month</option>
+                            <option value="last-month">Last Month</option>
+                            <option value="this-year">This Year</option>
+                        </select>
+                    </div>
                     <div>
                         <label class="block text-gray-700 mb-2">From Date</label>
                         <input type="date" id="report-from" class="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent">
@@ -445,16 +737,16 @@
                 </div>
                 
                 <div class="flex justify-end space-x-4">
-                    <button onclick="exportToCSV()" class="bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-700 transition">
+                    <button onclick="exportToCSV()" class="btn-export btn-csv text-white flex items-center">
                         <i class="fas fa-file-csv mr-2"></i>Export CSV
                     </button>
-                    <button onclick="exportToPDF()" class="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-700 transition">
+                    <button onclick="exportToPDF()" class="btn-export btn-pdf text-white flex items-center">
                         <i class="fas fa-file-pdf mr-2"></i>Export PDF
                     </button>
                 </div>
             </div>
             
-            <div class="bg-white rounded-xl shadow-md p-6">
+            <div class="card p-6">
                 <h2 class="text-xl font-bold mb-6">Monthly Summary</h2>
                 <div class="h-80">
                     <canvas id="monthly-chart"></canvas>
@@ -467,7 +759,7 @@
             <h1 class="text-3xl font-bold mb-8 text-teal-700">Account Settings</h1>
             
             <div class="grid md:grid-cols-2 gap-8">
-                <div class="bg-white rounded-xl shadow-md p-6">
+                <div class="card p-6">
                     <h2 class="text-xl font-bold mb-6">Profile Information</h2>
                     <div class="flex flex-col items-center mb-6">
                         <img id="account-profile-image" src="" alt="Profile" class="large-profile-image mb-4">
@@ -501,7 +793,7 @@
                     </form>
                 </div>
                 
-                <div class="bg-white rounded-xl shadow-md p-6">
+                <div class="card p-6">
                     <h2 class="text-xl font-bold mb-6">Preferences</h2>
                     <div class="space-y-6">
                         <div>
@@ -539,7 +831,7 @@
                 </div>
             </div>
             
-            <div class="bg-white rounded-xl shadow-md p-6 mt-8">
+            <div class="card p-6 mt-8">
                 <h2 class="text-xl font-bold mb-6">Data Management</h2>
                 <div class="grid md:grid-cols-2 gap-6">
                     <div>
@@ -566,7 +858,7 @@
         <div id="about" class="page fade-in">
             <h1 class="text-3xl font-bold mb-8 text-teal-700">About FlowLedge</h1>
             
-            <div class="bg-white rounded-xl shadow-md p-8 mb-8">
+            <div class="card p-8 mb-8">
                 <div class="max-w-3xl mx-auto">
                     <p class="text-lg text-gray-700 mb-6">
                         FlowLedge is a comprehensive money management platform designed to help individuals and families take control of their finances. Our mission is to make financial tracking simple, insightful, and empowering.
@@ -823,21 +1115,21 @@
 
         // Sample union transactions data
         const unionTransactions = [
-            { id: 1, userId: '1050', userName: 'MUHAMMAD SINAN PC', type: 'income', amount: 2500, category: 'Salary', date: '2025-01-01', notes: 'Monthly salary' },
-            { id: 2, userId: '1070', userName: 'MUHAMMED MUSAMMIL B K', type: 'income', amount: 2200, category: 'Salary', date: '2025-01-02', notes: 'Monthly salary' },
-            { id: 3, userId: '1050', userName: 'MUHAMMAD SINAN PC', type: 'expense', amount: 300, category: 'Food', date: '2025-01-03', notes: 'Groceries' },
-            { id: 4, userId: '1074', userName: 'MUAD .M', type: 'income', amount: 2800, category: 'Freelance', date: '2025-01-04', notes: 'Project payment' },
+            { id: 1, userId: '1050', userName: 'MUHAMMAD SINAN PC', type: 'income', amount: 2500, category: 'monthly', date: '2025-01-01', notes: 'Monthly salary' },
+            { id: 2, userId: '1070', userName: 'MUHAMMED MUSAMMIL B K', type: 'income', amount: 2200, category: 'monthly', date: '2025-01-02', notes: 'Monthly salary' },
+            { id: 3, userId: '1050', userName: 'MUHAMMAD SINAN PC', type: 'expense', amount: 300, category: 'Food', date: '2025-01-03', notes: 'food' },
+            { id: 4, userId: '1074', userName: 'MUAD .M', type: 'income', amount: 2800, category: 'other', date: '2025-01-04', notes: 'other' },
             { id: 5, userId: '1058', userName: 'MUHAMMED JALAL AT', type: 'expense', amount: 150, category: 'Transport', date: '2025-01-05', notes: 'Bus fare' },
-            { id: 6, userId: '1051', userName: 'MUHAMMAD HISHAM T', type: 'income', amount: 3000, category: 'Salary', date: '2025-01-06', notes: 'Monthly salary' },
-            { id: 7, userId: '1056', userName: 'MUHAMMED SHADIN N.M.', type: 'expense', amount: 200, category: 'Entertainment', date: '2025-01-07', notes: 'Movie tickets' },
-            { id: 8, userId: '1076', userName: 'MUHAMMED MINHAJ KK', type: 'income', amount: 2600, category: 'Salary', date: '2025-01-08', notes: 'Monthly salary' },
+            { id: 6, userId: '1051', userName: 'MUHAMMAD HISHAM T', type: 'income', amount: 3000, category: 'monthly', date: '2025-01-06', notes: 'Monthly' },
+            { id: 7, userId: '1056', userName: 'MUHAMMED SHADIN N.M.', type: 'expense', amount: 200, category: 'food', date: '2025-01-07', notes: 'food' },
+            { id: 8, userId: '1076', userName: 'MUHAMMED MINHAJ KK', type: 'income', amount: 2600, category: 'monthly', date: '2025-01-08', notes: 'Monthly' },
             { id: 9, userId: '1071', userName: 'SAYYID MOHAMMAD ZUHAIR A K', type: 'expense', amount: 400, category: 'Housing', date: '2025-01-09', notes: 'Rent' },
-            { id: 10, userId: '1075', userName: 'MUHAMMED HASHIM P', type: 'income', amount: 2400, category: 'Freelance', date: '2025-01-10', notes: 'Consulting fee' },
+            { id: 10, userId: '1075', userName: 'MUHAMMED HASHIM P', type: 'income', amount: 2400, category: 'other', date: '2025-01-10', notes: 'other' },
             { id: 11, userId: '1061', userName: 'ANSHID M P', type: 'expense', amount: 100, category: 'Healthcare', date: '2025-01-11', notes: 'Medicine' },
-            { id: 12, userId: '1072', userName: 'MOHAMMED SINAN TP', type: 'income', amount: 2900, category: 'Salary', date: '2025-01-12', notes: 'Monthly salary' },
-            { id: 13, userId: '1078', userName: 'MUHAMMED RABIEUE MK', type: 'expense', amount: 250, category: 'Food', date: '2025-01-13', notes: 'Restaurant' },
-            { id: 14, userId: '1088', userName: 'MOHAMMED NAEEM K', type: 'income', amount: 2700, category: 'Salary', date: '2025-01-14', notes: 'Monthly salary' },
-            { id: 15, userId: '1082', userName: 'MUHAMMED SANEEN', type: 'expense', amount: 180, category: 'Transport', date: '2025-01-15', notes: 'Fuel' },
+            { id: 12, userId: '1072', userName: 'MOHAMMED SINAN TP', type: 'income', amount: 2900, category: 'monthly', date: '2025-01-12', notes: 'Monthly' },
+            { id: 13, userId: '1078', userName: 'MUHAMMED RABIEUE MK', type: 'expense', amount: 250, category: 'Food', date: '2025-01-13', notes: 'food' },
+            { id: 14, userId: '1088', userName: 'MOHAMMED NAEEM K', type: 'income', amount: 2700, category: 'Monthly', date: '2025-01-14', notes: 'Monthly' },
+            { id: 15, userId: '1082', userName: 'MUHAMMED SANEEN', type: 'expense', amount: 180, category: 'Transport', date: '2025-01-15', notes: 'bus fair' },
             { id: 16, userId: '1090', userName: 'MUHAMMED BASSAM', type: 'income', amount: 3100, category: 'Freelance', date: '2025-01-16', notes: 'Design project' },
             { id: 17, userId: '1066', userName: 'HASHIM MOHAMMED K P', type: 'expense', amount: 350, category: 'Entertainment', date: '2025-01-17', notes: 'Concert' },
             { id: 18, userId: '1063', userName: 'MOHAMMED RISHADH. T', type: 'income', amount: 2300, category: 'Salary', date: '2025-01-18', notes: 'Monthly salary' },
@@ -872,6 +1164,9 @@
             // Add search and filter functionality for union report
             document.getElementById('union-search').addEventListener('input', filterUnionTransactions);
             document.getElementById('union-category-filter').addEventListener('change', filterUnionTransactions);
+            
+            // Add time range filter functionality
+            document.getElementById('report-time-range').addEventListener('change', handleTimeRangeChange);
         });
 
         // Authentication functions
@@ -891,13 +1186,26 @@
             if (isLoggedIn) {
                 const currentUser = localStorage.getItem('currentUser');
                 const userName = users[currentUser] ? users[currentUser].name : 'User';
+                const userImage = users[currentUser] ? users[currentUser].image : '';
                 
                 authButtons.innerHTML = `
-                    <div class="flex items-center space-x-3">
-                        <span class="hidden md:inline">Welcome, ${userName}</span>
-                        <button onclick="logout()" class="bg-red-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-red-700 transition">
-                            <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                    <div class="profile-dropdown">
+                        <button onclick="toggleProfileDropdown()" class="flex items-center space-x-2 focus:outline-none">
+                            <img src="${userImage}" alt="${userName}" class="profile-image">
+                            <span class="hidden md:inline">${userName}</span>
+                            <i class="fas fa-chevron-down text-xs"></i>
                         </button>
+                        <div id="profile-dropdown-menu" class="profile-dropdown-menu">
+                            <a href="#" onclick="showPage('account')" class="profile-dropdown-item">
+                                <i class="fas fa-user mr-2"></i> Profile
+                            </a>
+                            <a href="#" onclick="showPage('settings')" class="profile-dropdown-item">
+                                <i class="fas fa-cog mr-2"></i> Settings
+                            </a>
+                            <a href="#" onclick="logout()" class="profile-dropdown-item">
+                                <i class="fas fa-sign-out-alt mr-2"></i> Logout
+                            </a>
+                        </div>
                     </div>
                 `;
             } else {
@@ -907,6 +1215,11 @@
                     </button>
                 `;
             }
+        }
+
+        function toggleProfileDropdown() {
+            const dropdown = document.getElementById('profile-dropdown-menu');
+            dropdown.classList.toggle('active');
         }
 
         function loadUserProfile(userId) {
@@ -1265,31 +1578,60 @@
                 .sort((a, b) => b[1] - a[1])[0];
             
             if (highestCategory) {
-                insights.push(`The highest spending category is <strong>${highestCategory[0]}</strong> at $${highestCategory[1].toFixed(2)}`);
+                const percentage = Math.round((highestCategory[1] / expenses) * 100);
+                insights.push({
+                    icon: 'fa-chart-pie',
+                    text: `The highest spending category is <strong>${highestCategory[0]}</strong> at $${highestCategory[1].toFixed(2)}`,
+                    percentage: percentage
+                });
             }
             
             // Average transaction
             if (transactions.length > 0) {
                 const avgExpense = expenses / transactions.filter(t => t.type === 'expense').length;
-                insights.push(`Average expense: $${avgExpense.toFixed(2)}`);
+                insights.push({
+                    icon: 'fa-calculator',
+                    text: `Average expense: <strong>$${avgExpense.toFixed(2)}</strong>`,
+                    percentage: null
+                });
             }
             
             // Savings rate
             if (income > 0) {
                 const savingsRate = ((income - expenses) / income * 100).toFixed(1);
-                insights.push(`Union savings rate: <strong>${savingsRate}%</strong>`);
+                insights.push({
+                    icon: 'fa-piggy-bank',
+                    text: `Union savings rate: <strong>${savingsRate}%</strong>`,
+                    percentage: savingsRate
+                });
             }
             
             // Number of users
             const uniqueUsers = new Set(transactions.map(t => t.userId)).size;
-            insights.push(`Total users: <strong>${uniqueUsers}</strong>`);
+            insights.push({
+                icon: 'fa-users',
+                text: `Total users: <strong>${uniqueUsers}</strong>`,
+                percentage: null
+            });
             
             // Update UI
             const container = document.getElementById('union-insights-container');
             if (insights.length > 0) {
-                container.innerHTML = insights.map(insight => 
-                    `<div class="p-3 bg-gray-50 rounded-lg">${insight}</div>`
-                ).join('');
+                container.innerHTML = insights.map(insight => `
+                    <div class="insight-card flex items-center p-4 bg-gray-50 rounded-lg">
+                        <div class="mr-4 bg-teal-100 p-3 rounded-full">
+                            <i class="fas ${insight.icon} text-teal-600"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-gray-700">${insight.text}</p>
+                            ${insight.percentage !== null ? `
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: ${insight.percentage}%"></div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `).join('');
             } else {
                 container.innerHTML = '<p class="text-gray-600">No insights available</p>';
             }
@@ -1357,77 +1699,117 @@
         }
 
         function exportUnionToCSV() {
-            let csv = 'Date,User,Description,Category,Type,Amount\n';
+            showLoadingSpinner();
             
-            unionTransactions.forEach(t => {
-                csv += `${t.date},${t.userName},"${t.notes || t.category}",${t.category},${t.type},${t.amount}\n`;
-            });
-            
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'flowledge-union-report.csv';
-            a.click();
-            
-            showNotification('Union report CSV exported successfully!', 'success');
+            setTimeout(() => {
+                let csv = 'Date,User,Description,Category,Type,Amount\n';
+                
+                unionTransactions.forEach(t => {
+                    csv += `${t.date},${t.userName},"${t.notes || t.category}",${t.category},${t.type},${t.amount}\n`;
+                });
+                
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'flowledge-union-report.csv';
+                a.click();
+                
+                hideLoadingSpinner();
+                showNotification('Union report CSV exported successfully!', 'success');
+            }, 1000);
         }
 
         function exportUnionToPDF() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
+            showLoadingSpinner();
             
-            // Add title
-            doc.setFontSize(20);
-            doc.text('FlowLedge Union Financial Report', 105, 15, { align: 'center' });
-            
-            // Add date
-            doc.setFontSize(12);
-            doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 105, 25, { align: 'center' });
-            
-            // Calculate totals
-            const income = unionTransactions
-                .filter(t => t.type === 'income')
-                .reduce((sum, t) => sum + t.amount, 0);
+            setTimeout(() => {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
                 
-            const expenses = unionTransactions
-                .filter(t => t.type === 'expense')
-                .reduce((sum, t) => sum + t.amount, 0);
+                // Add title
+                doc.setFontSize(20);
+                doc.text('FlowLedge Union Financial Report', 105, 15, { align: 'center' });
                 
-            const balance = income - expenses;
-            
-            // Add summary
-            doc.setFontSize(14);
-            doc.text('Union Financial Summary', 20, 50);
-            doc.setFontSize(12);
-            doc.text(`Total Income: $${income.toFixed(2)}`, 20, 60);
-            doc.text(`Total Expenses: $${expenses.toFixed(2)}`, 20, 70);
-            doc.text(`Net Balance: $${balance.toFixed(2)}`, 20, 80);
-            
-            // Add transactions table
-            const tableData = unionTransactions.map(t => [
-                formatDate(t.date),
-                t.userName,
-                t.category,
-                t.type,
-                `$${t.amount.toFixed(2)}`,
-                t.notes || ''
-            ]);
-            
-            doc.autoTable({
-                head: [['Date', 'User', 'Category', 'Type', 'Amount', 'Notes']],
-                body: tableData,
-                startY: 90,
-                theme: 'grid'
-            });
-            
-            // Save the PDF
-            doc.save('flowledge-union-report.pdf');
-            
-            showNotification('Union report PDF exported successfully!', 'success');
+                // Add date
+                doc.setFontSize(12);
+                doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 105, 25, { align: 'center' });
+                
+                // Calculate totals
+                const income = unionTransactions
+                    .filter(t => t.type === 'income')
+                    .reduce((sum, t) => sum + t.amount, 0);
+                    
+                const expenses = unionTransactions
+                    .filter(t => t.type === 'expense')
+                    .reduce((sum, t) => sum + t.amount, 0);
+                    
+                const balance = income - expenses;
+                
+                // Add summary
+                doc.setFontSize(14);
+                doc.text('Union Financial Summary', 20, 50);
+                doc.setFontSize(12);
+                doc.text(`Total Income: $${income.toFixed(2)}`, 20, 60);
+                doc.text(`Total Expenses: $${expenses.toFixed(2)}`, 20, 70);
+                doc.text(`Net Balance: $${balance.toFixed(2)}`, 20, 80);
+                
+                // Add transactions table
+                const tableData = unionTransactions.map(t => [
+                    formatDate(t.date),
+                    t.userName,
+                    t.category,
+                    t.type,
+                    `$${t.amount.toFixed(2)}`,
+                    t.notes || ''
+                ]);
+                
+                doc.autoTable({
+                    head: [['Date', 'User', 'Category', 'Type', 'Amount', 'Notes']],
+                    body: tableData,
+                    startY: 90,
+                    theme: 'grid'
+                });
+                
+                // Save the PDF
+                doc.save('flowledge-union-report.pdf');
+                
+                hideLoadingSpinner();
+                showNotification('Union report PDF exported successfully!', 'success');
+            }, 1500);
         }
 
         // Reports functionality
+        function handleTimeRangeChange() {
+            const timeRange = document.getElementById('report-time-range').value;
+            const fromInput = document.getElementById('report-from');
+            const toInput = document.getElementById('report-to');
+            
+            const today = new Date();
+            const thisMonth = today.getMonth();
+            const thisYear = today.getFullYear();
+            
+            fromInput.value = '';
+            toInput.value = '';
+            
+            switch(timeRange) {
+                case 'this-month':
+                    fromInput.value = `${thisYear}-${String(thisMonth + 1).padStart(2, '0')}-01`;
+                    toInput.value = new Date(thisYear, thisMonth + 1, 0).toISOString().split('T')[0];
+                    break;
+                case 'last-month':
+                    const lastMonth = thisMonth === 0 ? 11 : thisMonth - 1;
+                    const lastMonthYear = thisMonth === 0 ? thisYear - 1 : thisYear;
+                    fromInput.value = `${lastMonthYear}-${String(lastMonth + 1).padStart(2, '0')}-01`;
+                    toInput.value = new Date(lastMonthYear, lastMonth + 1, 0).toISOString().split('T')[0];
+                    break;
+                case 'this-year':
+                    fromInput.value = `${thisYear}-01-01`;
+                    toInput.value = `${thisYear}-12-31`;
+                    break;
+            }
+        }
+
         function generateReport() {
             const fromDate = document.getElementById('report-from').value;
             const toDate = document.getElementById('report-to').value;
@@ -1485,105 +1867,140 @@
                 .sort((a, b) => b[1] - a[1])[0];
             
             if (highestCategory) {
-                insights.push(`Your highest spending category is <strong>${highestCategory[0]}</strong> at $${highestCategory[1].toFixed(2)}`);
+                const percentage = Math.round((highestCategory[1] / expenses) * 100);
+                insights.push({
+                    icon: 'fa-chart-pie',
+                    text: `Your highest spending category is <strong>${highestCategory[0]}</strong> at $${highestCategory[1].toFixed(2)}`,
+                    percentage: percentage
+                });
             }
             
             // Average transaction
             if (transactions.length > 0) {
                 const avgExpense = expenses / transactions.filter(t => t.type === 'expense').length;
-                insights.push(`Average expense: $${avgExpense.toFixed(2)}`);
+                insights.push({
+                    icon: 'fa-calculator',
+                    text: `Average expense: <strong>$${avgExpense.toFixed(2)}</strong>`,
+                    percentage: null
+                });
             }
             
             // Savings rate
             if (income > 0) {
                 const savingsRate = ((income - expenses) / income * 100).toFixed(1);
-                insights.push(`Your savings rate is <strong>${savingsRate}%</strong>`);
+                insights.push({
+                    icon: 'fa-piggy-bank',
+                    text: `Your savings rate is <strong>${savingsRate}%</strong>`,
+                    percentage: savingsRate
+                });
             }
             
             // Update UI
             const container = document.getElementById('insights-container');
             if (insights.length > 0) {
-                container.innerHTML = insights.map(insight => 
-                    `<div class="p-3 bg-gray-50 rounded-lg">${insight}</div>`
-                ).join('');
+                container.innerHTML = insights.map(insight => `
+                    <div class="insight-card flex items-center p-4 bg-gray-50 rounded-lg">
+                        <div class="mr-4 bg-teal-100 p-3 rounded-full">
+                            <i class="fas ${insight.icon} text-teal-600"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-gray-700">${insight.text}</p>
+                            ${insight.percentage !== null ? `
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: ${insight.percentage}%"></div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `).join('');
             } else {
                 container.innerHTML = '<p class="text-gray-600">No insights available for the selected filters</p>';
             }
         }
 
         function exportToCSV() {
-            let csv = 'Date,Type,Category,Amount,Notes\n';
+            showLoadingSpinner();
             
-            transactions.forEach(t => {
-                csv += `${t.date},${t.type},${t.category},${t.amount},"${t.notes || ''}"\n`;
-            });
-            
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'flowledge-transactions.csv';
-            a.click();
-            
-            showNotification('CSV exported successfully!', 'success');
+            setTimeout(() => {
+                let csv = 'Date,Type,Category,Amount,Notes\n';
+                
+                transactions.forEach(t => {
+                    csv += `${t.date},${t.type},${t.category},${t.amount},"${t.notes || ''}"\n`;
+                });
+                
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'flowledge-transactions.csv';
+                a.click();
+                
+                hideLoadingSpinner();
+                showNotification('CSV exported successfully!', 'success');
+            }, 1000);
         }
 
         function exportToPDF() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
+            showLoadingSpinner();
             
-            // Add title
-            doc.setFontSize(20);
-            doc.text('FlowLedge Financial Report', 105, 15, { align: 'center' });
-            
-            // Add date
-            doc.setFontSize(12);
-            doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 105, 25, { align: 'center' });
-            
-            // Add user info
-            const currentUser = localStorage.getItem('currentUser');
-            if (currentUser && users[currentUser]) {
-                doc.text(`User: ${users[currentUser].name} (${currentUser})`, 105, 35, { align: 'center' });
-            }
-            
-            // Add summary
-            const income = transactions
-                .filter(t => t.type === 'income')
-                .reduce((sum, t) => sum + t.amount, 0);
+            setTimeout(() => {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
                 
-            const expenses = transactions
-                .filter(t => t.type === 'expense')
-                .reduce((sum, t) => sum + t.amount, 0);
+                // Add title
+                doc.setFontSize(20);
+                doc.text('FlowLedge Financial Report', 105, 15, { align: 'center' });
                 
-            const balance = income - expenses;
-            
-            doc.setFontSize(14);
-            doc.text('Financial Summary', 20, 50);
-            doc.setFontSize(12);
-            doc.text(`Total Income: $${income.toFixed(2)}`, 20, 60);
-            doc.text(`Total Expenses: $${expenses.toFixed(2)}`, 20, 70);
-            doc.text(`Net Balance: $${balance.toFixed(2)}`, 20, 80);
-            
-            // Add transactions table
-            const tableData = transactions.map(t => [
-                formatDate(t.date),
-                t.type,
-                t.category,
-                `$${t.amount.toFixed(2)}`,
-                t.notes || ''
-            ]);
-            
-            doc.autoTable({
-                head: [['Date', 'Type', 'Category', 'Amount', 'Notes']],
-                body: tableData,
-                startY: 90,
-                theme: 'grid'
-            });
-            
-            // Save the PDF
-            doc.save('flowledge-report.pdf');
-            
-            showNotification('PDF exported successfully!', 'success');
+                // Add date
+                doc.setFontSize(12);
+                doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 105, 25, { align: 'center' });
+                
+                // Add user info
+                const currentUser = localStorage.getItem('currentUser');
+                if (currentUser && users[currentUser]) {
+                    doc.text(`User: ${users[currentUser].name} (${currentUser})`, 105, 35, { align: 'center' });
+                }
+                
+                // Add summary
+                const income = transactions
+                    .filter(t => t.type === 'income')
+                    .reduce((sum, t) => sum + t.amount, 0);
+                    
+                const expenses = transactions
+                    .filter(t => t.type === 'expense')
+                    .reduce((sum, t) => sum + t.amount, 0);
+                    
+                const balance = income - expenses;
+                
+                doc.setFontSize(14);
+                doc.text('Financial Summary', 20, 50);
+                doc.setFontSize(12);
+                doc.text(`Total Income: $${income.toFixed(2)}`, 20, 60);
+                doc.text(`Total Expenses: $${expenses.toFixed(2)}`, 20, 70);
+                doc.text(`Net Balance: $${balance.toFixed(2)}`, 20, 80);
+                
+                // Add transactions table
+                const tableData = transactions.map(t => [
+                    formatDate(t.date),
+                    t.type,
+                    t.category,
+                    `$${t.amount.toFixed(2)}`,
+                    t.notes || ''
+                ]);
+                
+                doc.autoTable({
+                    head: [['Date', 'Type', 'Category', 'Amount', 'Notes']],
+                    body: tableData,
+                    startY: 90,
+                    theme: 'grid'
+                });
+                
+                // Save the PDF
+                doc.save('flowledge-report.pdf');
+                
+                hideLoadingSpinner();
+                showNotification('PDF exported successfully!', 'success');
+            }, 1500);
         }
 
         // Account management
@@ -1731,21 +2148,36 @@
         }
 
         function showNotification(message, type) {
+            // Remove existing notifications
+            const existingNotifications = document.querySelectorAll('.notification');
+            existingNotifications.forEach(notification => notification.remove());
+            
             const notification = document.createElement('div');
-            notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 ${
-                type === 'success' ? 'bg-green-500' : 
-                type === 'error' ? 'bg-red-500' : 
-                type === 'warning' ? 'bg-yellow-500' : 'bg-blue-500'
-            } text-white`;
+            notification.className = `notification ${type}`;
             notification.textContent = message;
             
             document.body.appendChild(notification);
             
+            // Show notification
             setTimeout(() => {
-                notification.style.opacity = '0';
-                notification.style.transition = 'opacity 0.5s';
-                setTimeout(() => notification.remove(), 500);
+                notification.classList.add('show');
+            }, 10);
+            
+            // Hide notification after 3 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
             }, 3000);
+        }
+
+        function showLoadingSpinner() {
+            document.getElementById('loading-spinner').classList.add('active');
+        }
+
+        function hideLoadingSpinner() {
+            document.getElementById('loading-spinner').classList.remove('active');
         }
 
         function initializeCharts() {
@@ -1756,9 +2188,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
-
