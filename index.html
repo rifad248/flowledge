@@ -15,43 +15,6 @@
             font-family: 'Inter', sans-serif;
         }
         
-        .dark { 
-            background-color: #1a202c; 
-            color: #e2e8f0; 
-        }
-        
-        .dark .bg-white { 
-            background-color: #2d3748; 
-        }
-        
-        .dark .bg-gray-50 { 
-            background-color: #2d3748; 
-        }
-        
-        .dark .bg-gray-100 { 
-            background-color: #374151; 
-        }
-        
-        .dark .text-gray-700 { 
-            color: #e2e8f0; 
-        }
-        
-        .dark .text-gray-600 { 
-            color: #cbd5e0; 
-        }
-        
-        .dark .border-gray-200 { 
-            border-color: #4a5568; 
-        }
-        
-        .dark .border-gray-300 { 
-            border-color: #4a5568; 
-        }
-        
-        .dark .hover\:bg-gray-100:hover { 
-            background-color: #374151; 
-        }
-        
         .page { 
             display: none; 
         }
@@ -62,10 +25,6 @@
         
         .transaction-row:hover { 
             background-color: rgba(0,0,0,0.05); 
-        }
-        
-        .dark .transaction-row:hover { 
-            background-color: rgba(255,255,255,0.05); 
         }
         
         .goal-progress { 
@@ -142,10 +101,6 @@
         .card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
-        
-        .dark .card {
-            background: linear-gradient(to bottom right, #2d3748, #374151);
         }
         
         .insight-card {
@@ -277,10 +232,6 @@
             display: block;
         }
         
-        .dark .profile-dropdown-menu {
-            background-color: #2d3748;
-        }
-        
         .profile-dropdown-item {
             padding: 10px 15px;
             display: flex;
@@ -291,14 +242,6 @@
         
         .profile-dropdown-item:hover {
             background-color: #f3f4f6;
-        }
-        
-        .dark .profile-dropdown-item {
-            color: #e2e8f0;
-        }
-        
-        .dark .profile-dropdown-item:hover {
-            background-color: #374151;
         }
         
         .mini-chart {
@@ -318,10 +261,6 @@
             align-items: center;
         }
         
-        .dark .welcome-banner {
-            background: linear-gradient(90deg, #0f766e, #134e4a);
-        }
-        
         .empty-state {
             display: flex;
             flex-direction: column;
@@ -335,10 +274,6 @@
             font-size: 4rem;
             color: #cbd5e0;
             margin-bottom: 1rem;
-        }
-        
-        .dark .empty-state-icon {
-            color: #4a5568;
         }
         
         .tooltip {
@@ -376,10 +311,6 @@
             display: none;
         }
         
-        .dark .transaction-card {
-            border-color: #4a5568;
-        }
-        
         @media (max-width: 640px) {
             .transaction-card {
                 display: block;
@@ -403,10 +334,6 @@
             margin-top: 1rem;
         }
         
-        .dark .recurring-form {
-            background-color: #374151;
-        }
-        
         .category-colors {
             display: flex;
             flex-wrap: wrap;
@@ -419,6 +346,214 @@
             height: 20px;
             border-radius: 50%;
         }
+        
+        /* Tutorial styles */
+        .tutorial-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .tutorial-overlay.active {
+            display: flex;
+        }
+        
+        .tutorial-highlight {
+            position: absolute;
+            border-radius: 8px;
+            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.7);
+            transition: all 0.3s ease;
+            z-index: 1001;
+        }
+        
+        .tutorial-content {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            padding: 20px 30px;
+            max-width: 90%;
+            width: 500px;
+            z-index: 1002;
+        }
+        
+        .tutorial-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #14b8a6;
+        }
+        
+        .tutorial-description {
+            color: #4b5563;
+            margin-bottom: 20px;
+        }
+        
+        .tutorial-navigation {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .tutorial-btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .tutorial-btn-primary {
+            background-color: #14b8a6;
+            color: white;
+        }
+        
+        .tutorial-btn-primary:hover {
+            background-color: #0d9488;
+        }
+        
+        .tutorial-btn-secondary {
+            background-color: #e5e7eb;
+            color: #4b5563;
+        }
+        
+        .tutorial-btn-secondary:hover {
+            background-color: #d1d5db;
+        }
+        
+        .tutorial-step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        
+        .tutorial-step-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #d1d5db;
+            margin: 0 4px;
+        }
+        
+        .tutorial-step-dot.active {
+            background-color: #14b8a6;
+        }
+        
+        /* Chatbot styles */
+        .chatbot-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 999;
+        }
+        
+        .chatbot-toggle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #14b8a6;
+            color: white;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: all 0.3s ease;
+        }
+        
+        .chatbot-toggle:hover {
+            background-color: #0d9488;
+            transform: scale(1.05);
+        }
+        
+        .chatbot-window {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            width: 350px;
+            height: 500px;
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .chatbot-window.active {
+            display: flex;
+        }
+        
+        .chatbot-header {
+            background-color: #14b8a6;
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .chatbot-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        
+        .chatbot-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+        
+        .chatbot-category {
+            margin-bottom: 20px;
+        }
+        
+        .chatbot-category-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #14b8a6;
+        }
+        
+        .chatbot-question {
+            background-color: #f3f4f6;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .chatbot-question:hover {
+            background-color: #e5e7eb;
+        }
+        
+        .chatbot-answer {
+            background-color: #f0fdfa;
+            border-left: 4px solid #14b8a6;
+            border-radius: 0 8px 8px 0;
+            padding: 10px;
+            margin-top: 8px;
+            margin-bottom: 15px;
+            display: none;
+        }
+        
+        .chatbot-answer.active {
+            display: block;
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans">
@@ -427,6 +562,47 @@
         <div class="bg-white p-6 rounded-xl shadow-lg text-center">
             <div class="spinner mx-auto mb-4"></div>
             <p class="text-gray-700">Processing your request...</p>
+        </div>
+    </div>
+
+    <!-- Main Tutorial Overlay -->
+    <div id="main-tutorial-overlay" class="tutorial-overlay">
+        <div class="tutorial-highlight"></div>
+        <div class="tutorial-content">
+            <h3 class="tutorial-title">Welcome to FlowLedge</h3>
+            <p class="tutorial-description">Let's take a quick tour to help you get started with managing your finances.</p>
+            <div class="tutorial-navigation">
+                <button class="tutorial-btn tutorial-btn-secondary" onclick="skipMainTutorial()">Skip</button>
+                <button class="tutorial-btn tutorial-btn-primary" onclick="nextMainTutorialStep()">Next</button>
+            </div>
+            <div class="tutorial-step-indicator">
+                <div class="tutorial-step-dot active"></div>
+                <div class="tutorial-step-dot"></div>
+                <div class="tutorial-step-dot"></div>
+                <div class="tutorial-step-dot"></div>
+                <div class="tutorial-step-dot"></div>
+                <div class="tutorial-step-dot"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tutorial Overlay -->
+    <div id="tutorial-overlay" class="tutorial-overlay">
+        <div class="tutorial-highlight"></div>
+        <div class="tutorial-content">
+            <h3 class="tutorial-title">Settings Tutorial</h3>
+            <p class="tutorial-description">Learn how to customize your FlowLedge experience.</p>
+            <div class="tutorial-navigation">
+                <button class="tutorial-btn tutorial-btn-secondary" onclick="skipTutorial()">Skip</button>
+                <button class="tutorial-btn tutorial-btn-primary" onclick="nextTutorialStep()">Next</button>
+            </div>
+            <div class="tutorial-step-indicator">
+                <div class="tutorial-step-dot active"></div>
+                <div class="tutorial-step-dot"></div>
+                <div class="tutorial-step-dot"></div>
+                <div class="tutorial-step-dot"></div>
+                <div class="tutorial-step-dot"></div>
+            </div>
         </div>
     </div>
 
@@ -443,19 +619,13 @@
                 <button onclick="showPage('union-report')" class="nav-link nav-btn hover:text-teal-200 transition">Union Report</button>
                 <button onclick="showPage('dashboard')" class="nav-link nav-btn hover:text-teal-200 transition">Dashboard</button>
                 <button onclick="showPage('reports')" class="nav-link nav-btn hover:text-teal-200 transition">Reports</button>
-                <button onclick="showPage('account')" class="nav-link nav-btn hover:text-teal-200 transition settings-link">
+                <button onclick="startSettingsTutorial()" class="nav-link nav-btn hover:text-teal-200 transition settings-link">
                     <i class="fas fa-cog"></i> Settings
                 </button>
                 <button onclick="showPage('about')" class="nav-link nav-btn hover:text-teal-200 transition">About</button>
             </div>
             
             <div class="flex items-center space-x-4">
-                <div class="tooltip">
-                    <button onclick="toggleDarkMode()" class="p-2 rounded-full hover:bg-teal-700 transition">
-                        <i class="fas fa-moon" id="theme-icon"></i>
-                    </button>
-                    <span class="tooltiptext">Toggle Theme</span>
-                </div>
                 <div id="auth-buttons">
                     <!-- Auth buttons will be dynamically inserted here -->
                 </div>
@@ -469,7 +639,7 @@
         <button onclick="showPage('union-report')" class="p-2"><i class="fas fa-chart-bar"></i></button>
         <button onclick="showPage('dashboard')" class="p-2"><i class="fas fa-chart-pie"></i></button>
         <button onclick="showPage('reports')" class="p-2"><i class="fas fa-file-alt"></i></button>
-        <button onclick="showPage('account')" class="p-2"><i class="fas fa-cog"></i></button>
+        <button onclick="startSettingsTutorial()" class="p-2"><i class="fas fa-cog"></i></button>
     </div>
 
     <!-- Login Modal -->
@@ -767,10 +937,10 @@
                             <label class="block text-gray-700 mb-2">Category</label>
                             <select id="transaction-category" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent">
                                 <option value="Food">Food</option>
-                                <option value="Transport">Bus Fair</option>
-                                <option value="Housing">SSLC</option>
-                                <option value="Healthcare">Health Care</option>
-                                <option value="Salary">Monthly</option>
+                                <option value="Bus Fair">Bus Fair</option>
+                                <option value="Monthly Fee">Monthly Fee</option>
+                                <option value="SSLC">SSLC</option>
+                                <option value="Healthcare">Healthcare</option>
                                 <option value="Other">Other</option>
                             </select>
                             <div class="category-colors">
@@ -905,10 +1075,10 @@
                         <select id="report-category" class="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent">
                             <option value="all">All Categories</option>
                             <option value="Food">Food</option>
-                            <option value="Transport">Bus Fair</option>
-                            <option value="Housing">Monthly</option>
+                            <option value="Bus Fair">Bus Fair</option>
+                            <option value="Monthly Fee">Monthly Fee</option>
+                            <option value="SSLC">SSLC</option>
                             <option value="Healthcare">Healthcare</option>
-                            <option value="Salary">SSLC</option>
                             <option value="Other">Other</option>
                         </select>
                     </div>
@@ -1015,21 +1185,6 @@
                                 <option value="EUR">Euro (EUR)</option>
                                 <option value="GBP">British Pound (GBP)</option>
                             </select>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-gray-700 mb-2">Theme</label>
-                            <div class="flex space-x-4">
-                                <button onclick="setTheme('light')" class="flex-1 p-3 border border-gray-300 rounded-lg hover:bg-gray-100 transition">
-                                    <i class="fas fa-sun mr-2"></i> Light
-                                </button>
-                                <button onclick="setTheme('dark')" class="flex-1 p-3 border border-gray-300 rounded-lg hover:bg-gray-100 transition">
-                                    <i class="fas fa-moon mr-2"></i> Dark
-                                </button>
-                                <button onclick="setTheme('system')" class="flex-1 p-3 border border-gray-300 rounded-lg hover:bg-gray-100 transition">
-                                    <i class="fas fa-desktop mr-2"></i> System
-                                </button>
-                            </div>
                         </div>
                         
                         <div>
@@ -1171,14 +1326,9 @@
                 </div>
                 
                 <div>
-                    <h4 class="font-bold mb-4">Subscribe</h4>
-                    <p class="text-gray-400 mb-4">Get financial tips and updates</p>
-                    <div class="flex">
-                        <input type="email" placeholder="Your email" class="px-4 py-2 rounded-l-lg text-gray-800 w-full focus:outline-none">
-                        <button class="bg-teal-600 px-4 py-2 rounded-r-lg hover:bg-teal-700 transition">
-                            <i class="fas fa-paper-plane"></i>
-                        </button>
-                    </div>
+                    <h4 class="font-bold mb-4">Contact</h4>
+                    <p class="text-gray-400 mb-2">Email: rifadwork@gmail.com</p>
+                    <p class="text-gray-400">WhatsApp: +918606218631</p>
                 </div>
             </div>
             
@@ -1188,8 +1338,210 @@
             </div>
         </div>
     </footer>
+   <!-- flowledger-chatbot.html -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>FlowLedger Chatbot</title>
+<style>
+  :root{--bg:#0b1220;--card:#0f1724;--accent:#10b981;--muted:#9aa6b2;--bubble:#111827}
+  body{font-family:Inter,system-ui,Segoe UI,Arial; background:var(--bg); color:#fff; margin:0; padding:24px;}
+  .chat-launch{position:fixed; right:24px; bottom:24px; z-index:9999}
+  .btn{background:var(--accent); color:#042018; padding:12px 16px; border-radius:10px; font-weight:600; border:none; cursor:pointer; box-shadow:0 6px 18px rgba(16,185,129,0.18)}
+  .widget{width:360px; max-width:calc(100% - 48px); border-radius:12px; overflow:hidden; box-shadow:0 14px 40px rgba(2,6,23,0.6); background:linear-gradient(180deg,var(--card),#08101a)}
+  .header{padding:14px 16px; display:flex; align-items:center; gap:10px; background:#07111a}
+  .title{font-weight:700; color:var(--accent)}
+  .body{height:420px; overflow:auto; padding:12px; display:flex; flex-direction:column; gap:10px}
+  .input-wrap{display:flex; gap:8px; padding:12px; background:linear-gradient(180deg,#08121a,#041018)}
+  .in{flex:1; padding:10px 12px; border-radius:10px; border:1px solid #12202a; background:#06121a; color:#d1e8e0}
+  .send{padding:10px 12px; border-radius:10px; background:var(--accent); border:none; font-weight:700; cursor:pointer}
+  .msg{max-width:82%; padding:10px 12px; border-radius:10px; line-height:1.3}
+  .bot{align-self:flex-start; background:var(--bubble); color:#e6f7f0}
+  .user{align-self:flex-end; background:#0f1724; color:#cfece3}
+  .small{font-size:12px; color:var(--muted); margin-top:6px}
+  .suggest{display:flex; gap:6px; flex-wrap:wrap; margin-top:8px}
+  .chip{padding:6px 10px; background:#07111a; border-radius:999px; cursor:pointer; border:1px solid #152430}
+  a.contact{color:var(--accent); text-decoration:underline}
+</style>
+</head>
+<body>
 
-    <script>
+<!-- Launch button -->
+<div class="chat-launch">
+  <button id="openBtn" class="btn">Chat with FlowLedger</button>
+</div>
+
+<!-- Chat widget (hidden by default) -->
+<div id="widget" style="display:none; position:fixed; right:24px; bottom:84px; z-index:9999;">
+  <div class="widget">
+    <div class="header">
+      <div style="width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,#072025,#09363a);display:flex;align-items:center;justify-content:center;font-weight:800;color:#9ff0df">FL</div>
+      <div>
+        <div class="title">FlowLedger Assistant</div>
+        <div class="small">Ask about features, reports, or account help</div>
+      </div>
+      <div style="margin-left:auto">
+        <button id="closeBtn" class="btn" style="background:#0b1220;color:var(--accent);padding:8px 10px">Close</button>
+      </div>
+    </div>
+
+    <div id="messages" class="body" aria-live="polite"></div>
+
+    <div style="border-top:1px solid rgba(255,255,255,0.03)">
+      <div class="input-wrap">
+        <input id="userInput" class="in" placeholder="Type a question. Try: How do I add a transaction?" />
+        <button id="sendBtn" class="send">Send</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---------- Q&A dataset ---------- */
+const QA = [
+  // Basic Info
+  {q: "what is flowledger", a: "FlowLedger is a smart money ledger that helps you track your income, expenses, and savings easily."},
+  {q: "how can i start using flowledger", a: "Create an account, log in, and add your first income or expense entry. Your balance and reports update instantly."},
+  {q: "is flowledger free", a: "Yes, FlowLedger is completely free for personal use."},
+  {q: "can i use flowledger on mobile", a: "Yes, the site is fully responsive and works smoothly on mobile and tablet screens."},
+
+  // Transactions
+  {q: "how do i add a new transaction", a: "Go to the Add Transaction section, choose income or expense, select a category, enter amount, date and notes, then click Save."},
+  {q: "can i edit or delete a transaction", a: "Yes, open your transaction list and click the edit or delete icon beside the item you want to change."},
+  {q: "how can i search or filter my transactions", a: "Use the search bar or category filter to quickly find specific transactions."},
+  {q: "what do the categories mean", a: "Categories help organize your spending, like Food, Bus Fare, Monthly Bills, or Other. You can add your own categories in Settings."},
+
+  // Reports & Insights
+  {q: "where can i see my income and expense reports", a: "Visit the Reports tab to view charts and summaries of your monthly or yearly transactions."},
+  {q: "how do i know if i’m overspending", a: "If you’ve set a budget limit, FlowLedger will alert you when you cross your monthly limit."},
+  {q: "can i export my data", a: "Yes, you can export all transactions to a CSV file for backup or use in Excel or Google Sheets."},
+
+  // Settings & Features
+  {q: "how can i change the currency", a: "Go to Settings and select your preferred currency from the dropdown menu."},
+  {q: "does flowledger have dark mode", a: "Yes, you can switch between light and dark mode anytime from Settings or the top bar toggle."},
+  {q: "can i recover my data after clearing it", a: "Only if you exported or backed up your data before clearing. Make backups regularly."},
+  {q: "what does recurring transaction mean", a: "A recurring transaction automatically adds repeated entries, like monthly rent or salary."},
+
+  // Account & Privacy
+  {q: "is my financial data safe", a: "Yes, your data is stored securely and not shared. Always log out when using shared devices."},
+  {q: "can i sign in using google", a: "If enabled, you can sign in with Google using the Sign in with Google button."},
+  {q: "i forgot my password", a: "Click Forgot Password on the login page and follow the email reset steps."},
+
+  // Tips & Help
+  {q: "how do i track my monthly savings", a: "Enter both income and expenses. The remaining balance shows how much you saved."},
+  {q: "how can i make my dashboard more organized", a: "Use clear categories, add notes to entries, and review reports weekly."},
+  {q: "my balance looks wrong", a: "Double-check for duplicate entries or incorrect transaction types (income vs expense)."},
+  {q: "who created flowledger", a: "FlowLedger is designed by TyPixel, focused on simple and smart personal finance tools."},
+  {q: "who is the founder of flowledger", a: "FlowLedger was founded and developed by Rifad."},
+
+  // Contact (no raw phone printed; includes email + WhatsApp link)
+  {q: "how can i contact the flowledger team", a: `You can reach Rifad at <a class="contact" href="mailto:rifadwork@gmail.com">rifadwork@gmail.com</a> or via <a class="contact" href="https://wa.me/918606218631" target="_blank">WhatsApp chat</a>.`}
+];
+
+/* ---------- Utilities: normalize and simple scoring ---------- */
+function normalize(text){
+  return text.toLowerCase().replace(/[’'".?,-\/#!$%\^&\*;:{}=\_`~()]/g,"").trim();
+}
+
+function bestMatch(input){
+  const s = normalize(input);
+  // score by common token count
+  const tokens = s.split(/\s+/).filter(Boolean);
+  let best = {score:0, item:null};
+  for(const item of QA){
+    const q = normalize(item.q);
+    const qTokens = q.split(/\s+/).filter(Boolean);
+    let hits = 0;
+    for(const t of tokens){
+      if(qTokens.includes(t)) hits++;
+      // partial match
+      else {
+        for(const qt of qTokens){
+          if(qt.includes(t) || t.includes(qt)) { hits++; break; }
+        }
+      }
+    }
+    // small boost for exact containment
+    if(q.includes(s) || s.includes(q)) hits += 0.5;
+    if(hits > best.score){ best = {score: hits, item}; }
+  }
+  return best.item;
+}
+
+/* ---------- UI wiring ---------- */
+const openBtn = document.getElementById('openBtn');
+const closeBtn = document.getElementById('closeBtn');
+const widget = document.getElementById('widget');
+const messages = document.getElementById('messages');
+const userInput = document.getElementById('userInput');
+const sendBtn = document.getElementById('sendBtn');
+
+openBtn.addEventListener('click', () => {
+  widget.style.display = 'block';
+  openBtn.style.display = 'none';
+  addBot("Hi, I'm the FlowLedger assistant. Ask me about transactions, reports, settings, or contact info. Try: How do I add a transaction?");
+});
+
+closeBtn.addEventListener('click', () => {
+  widget.style.display = 'none';
+  openBtn.style.display = 'inline-block';
+});
+
+sendBtn.addEventListener('click', sendMessage);
+userInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') sendMessage(); });
+
+function addBot(text){
+  const el = document.createElement('div');
+  el.className = 'msg bot';
+  el.innerHTML = text;
+  messages.appendChild(el);
+  messages.scrollTop = messages.scrollHeight;
+}
+
+function addUser(text){
+  const el = document.createElement('div');
+  el.className = 'msg user';
+  el.textContent = text;
+  messages.appendChild(el);
+  messages.scrollTop = messages.scrollHeight;
+}
+
+function sendMessage(){
+  const text = userInput.value.trim();
+  if(!text) return;
+  addUser(text);
+  userInput.value = '';
+  // find best match
+  const hit = bestMatch(text);
+  if(hit && hit.a){
+    // small delay for realism
+    setTimeout(()=> addBot(hit.a), 250);
+  } else {
+    setTimeout(()=> {
+      addBot("Sorry, I didn't understand that. Here are some things you can ask:");
+      const sug = document.createElement('div');
+      sug.className = 'small suggest';
+      const examples = [
+        "How do I add a transaction?",
+        "Can I export my data?",
+        "How can I change the currency?",
+        "Who is the founder of FlowLedger?"
+      ];
+      for(const eText of examples){
+        const c = document.createElement('button');
+        c.className = 'chip';
+        c.textContent = eText;
+        c.onclick = () => { addUser(eText); userInput.value = eText; sendMessage(); };
+        sug.appendChild(c);
+      }
+      messages.appendChild(sug);
+      messages.scrollTop = messages.scrollHeight;
+    }, 300);
+  }
+}
+</script>
         // User database with profile images
         const users = {
             '1050': { 
@@ -1378,8 +1730,86 @@
             { id: 20, userId: '1068', userName: 'MUHAMMED UVAIS.EK', type: 'income', amount: 2800, category: 'Salary', date: '2025-01-20', notes: 'Monthly salary' }
         ];
 
+        // Main tutorial steps
+        const mainTutorialSteps = [
+            {
+                element: '.nav-link:nth-child(1)',
+                title: 'Home',
+                content: 'This is the Home page where you can get an overview of FlowLedge and access key features.'
+            },
+            {
+                element: '.nav-link:nth-child(2)',
+                title: 'Union Report',
+                content: 'View the Union Financial Report to see overall income, expenses, and balance across all users.'
+            },
+            {
+                element: '.nav-link:nth-child(3)',
+                title: 'Dashboard',
+                content: 'Your personal Dashboard shows your income, expenses, and current balance. Add transactions here.'
+            },
+            {
+                element: '.nav-link:nth-child(4)',
+                title: 'Reports',
+                content: 'Generate detailed financial reports with charts and insights about your spending patterns.'
+            },
+            {
+                element: '.settings-link',
+                title: 'Settings',
+                content: 'Customize your account preferences, currency, and manage your data in Settings.'
+            },
+            {
+                element: '.nav-link:nth-child(6)',
+                title: 'About',
+                content: 'Learn more about FlowLedge, its features, and the team behind it in the About section.'
+            }
+        ];
+
+        // Settings tutorial steps
+        const settingsTutorialSteps = [
+            {
+                element: '.settings-link',
+                title: 'Settings',
+                content: 'Click here to access your account settings and preferences.'
+            },
+            {
+                element: '#account',
+                title: 'Account Settings',
+                content: 'Here you can update your profile, change preferences, and manage your data.'
+            },
+            {
+                element: '#profile-form',
+                title: 'Profile Information',
+                content: 'Update your personal information and password here.'
+            },
+            {
+                element: '#currency',
+                title: 'Currency Settings',
+                content: 'Choose your preferred currency for financial transactions.'
+            },
+            {
+                element: '#budget-limit',
+                title: 'Budget Limit',
+                content: 'Set your monthly budget limit to receive alerts when you exceed it.'
+            }
+        ];
+
+        let currentMainTutorialStep = 0;
+        let currentSettingsTutorialStep = 0;
+        let mainTutorialInProgress = false;
+        let settingsTutorialInProgress = false;
+
         // Initialize app
         document.addEventListener('DOMContentLoaded', function() {
+            // Check if user has seen the main tutorial
+            const hasSeenMainTutorial = localStorage.getItem('hasSeenMainTutorial');
+            
+            if (!hasSeenMainTutorial) {
+                // Show main tutorial
+                document.getElementById('main-tutorial-overlay').classList.add('active');
+                mainTutorialInProgress = true;
+                showMainTutorialStep();
+            }
+            
             // Set today's date as default
             document.getElementById('transaction-date').valueAsDate = new Date();
             
@@ -1395,9 +1825,6 @@
             
             // Load union report data
             loadUnionReport();
-            
-            // Check for dark mode preference
-            checkDarkModePreference();
             
             // Add search and filter functionality for union report
             document.getElementById('union-search').addEventListener('input', filterUnionTransactions);
@@ -1419,16 +1846,146 @@
             
             // Check for first visit
             checkFirstVisit();
-            
-            // Check system theme preference
-            if (localStorage.getItem('theme') === 'system') {
-                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                if (prefersDark) {
-                    document.body.classList.add('dark');
-                    document.getElementById('theme-icon').classList.replace('fa-moon', 'fa-sun');
-                }
-            }
         });
+
+        // Main tutorial functions
+        function showMainTutorialStep() {
+            const step = mainTutorialSteps[currentMainTutorialStep];
+            const element = document.querySelector(step.element);
+            
+            if (!element) {
+                nextMainTutorialStep();
+                return;
+            }
+            
+            const rect = element.getBoundingClientRect();
+            const highlight = document.querySelector('#main-tutorial-overlay .tutorial-highlight');
+            
+            // Position and size the highlight
+            highlight.style.width = `${rect.width + 20}px`;
+            highlight.style.height = `${rect.height + 20}px`;
+            highlight.style.left = `${rect.left - 10}px`;
+            highlight.style.top = `${rect.top - 10}px`;
+            
+            // Update content
+            document.querySelector('#main-tutorial-overlay .tutorial-title').textContent = step.title;
+            document.querySelector('#main-tutorial-overlay .tutorial-description').textContent = step.content;
+            
+            // Update step indicators
+            const dots = document.querySelectorAll('#main-tutorial-overlay .tutorial-step-dot');
+            dots.forEach((dot, index) => {
+                if (index === currentMainTutorialStep) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+            
+            // Scroll element into view if needed
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function nextMainTutorialStep() {
+            if (currentMainTutorialStep < mainTutorialSteps.length - 1) {
+                currentMainTutorialStep++;
+                showMainTutorialStep();
+            } else {
+                finishMainTutorial();
+            }
+        }
+
+        function skipMainTutorial() {
+            finishMainTutorial();
+        }
+
+        function finishMainTutorial() {
+            document.getElementById('main-tutorial-overlay').classList.remove('active');
+            localStorage.setItem('hasSeenMainTutorial', 'true');
+            mainTutorialInProgress = false;
+        }
+
+        // Settings tutorial functions
+        function startSettingsTutorial() {
+            if (!localStorage.getItem('settingsTutorialSeen')) {
+                settingsTutorialInProgress = true;
+                currentSettingsTutorialStep = 0;
+                showSettingsTutorialStep();
+                document.getElementById('tutorial-overlay').classList.add('active');
+            } else {
+                showPage('account');
+            }
+        }
+
+        function showSettingsTutorialStep() {
+            const step = settingsTutorialSteps[currentSettingsTutorialStep];
+            const element = document.querySelector(step.element);
+            
+            if (!element) {
+                nextSettingsTutorialStep();
+                return;
+            }
+            
+            const rect = element.getBoundingClientRect();
+            const highlight = document.querySelector('#tutorial-overlay .tutorial-highlight');
+            
+            // Position and size the highlight
+            highlight.style.width = `${rect.width + 20}px`;
+            highlight.style.height = `${rect.height + 20}px`;
+            highlight.style.left = `${rect.left - 10}px`;
+            highlight.style.top = `${rect.top - 10}px`;
+            
+            // Update content
+            document.querySelector('#tutorial-overlay .tutorial-title').textContent = step.title;
+            document.querySelector('#tutorial-overlay .tutorial-description').textContent = step.content;
+            
+            // Update step indicators
+            const dots = document.querySelectorAll('#tutorial-overlay .tutorial-step-dot');
+            dots.forEach((dot, index) => {
+                if (index === currentSettingsTutorialStep) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+            
+            // Scroll element into view if needed
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function nextSettingsTutorialStep() {
+            if (currentSettingsTutorialStep < settingsTutorialSteps.length - 1) {
+                currentSettingsTutorialStep++;
+                showSettingsTutorialStep();
+            } else {
+                finishSettingsTutorial();
+            }
+        }
+
+        function skipTutorial() {
+            finishSettingsTutorial();
+        }
+
+        function finishSettingsTutorial() {
+            document.getElementById('tutorial-overlay').classList.remove('active');
+            localStorage.setItem('settingsTutorialSeen', 'true');
+            settingsTutorialInProgress = false;
+            
+            // If we're on the last step and it's the settings page, make sure we're on the account page
+            if (currentSettingsTutorialStep === settingsTutorialSteps.length - 1) {
+                showPage('account');
+            }
+        }
+
+        // Chatbot functions
+        function toggleChatbot() {
+            const chatbotWindow = document.getElementById('chatbot-window');
+            chatbotWindow.classList.toggle('active');
+        }
+
+        function toggleAnswer(element) {
+            const answer = element.nextElementSibling;
+            answer.classList.toggle('active');
+        }
 
         // Authentication functions
         function checkAuthStatus() {
@@ -1544,60 +2101,6 @@
             window.scrollTo(0, 0);
         }
 
-        // Dark mode functions
-        function checkDarkModePreference() {
-            const darkMode = localStorage.getItem('darkMode');
-            const theme = localStorage.getItem('theme');
-            
-            if (darkMode === 'true' || theme === 'dark') {
-                document.body.classList.add('dark');
-                document.getElementById('theme-icon').classList.replace('fa-moon', 'fa-sun');
-            } else if (theme === 'system') {
-                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                if (prefersDark) {
-                    document.body.classList.add('dark');
-                    document.getElementById('theme-icon').classList.replace('fa-moon', 'fa-sun');
-                }
-            }
-        }
-
-        function toggleDarkMode() {
-            document.body.classList.toggle('dark');
-            const isDark = document.body.classList.contains('dark');
-            localStorage.setItem('darkMode', isDark);
-            
-            const icon = document.getElementById('theme-icon');
-            if (isDark) {
-                icon.classList.replace('fa-moon', 'fa-sun');
-            } else {
-                icon.classList.replace('fa-sun', 'fa-moon');
-            }
-        }
-
-        // Set theme explicitly
-        function setTheme(theme) {
-            localStorage.setItem('theme', theme);
-            
-            if (theme === 'dark') {
-                document.body.classList.add('dark');
-                document.getElementById('theme-icon').classList.replace('fa-moon', 'fa-sun');
-            } else if (theme === 'light') {
-                document.body.classList.remove('dark');
-                document.getElementById('theme-icon').classList.replace('fa-sun', 'fa-moon');
-            } else if (theme === 'system') {
-                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                if (prefersDark) {
-                    document.body.classList.add('dark');
-                    document.getElementById('theme-icon').classList.replace('fa-moon', 'fa-sun');
-                } else {
-                    document.body.classList.remove('dark');
-                    document.getElementById('theme-icon').classList.replace('fa-sun', 'fa-moon');
-                }
-            }
-            
-            showNotification(`Theme set to ${theme}`, 'success');
-        }
-
         // Transaction management
         let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
         let recurringTransactions = JSON.parse(localStorage.getItem('recurringTransactions')) || [];
@@ -1670,7 +2173,7 @@
             // Sort transactions by date descending (newest first)
             const sortedTransactions = [...transactions].sort((a, b) => new Date(b.date) - new Date(a.date));
             
-            // Update table
+            // Update table - only show recent transactions (last 10)
             tbody.innerHTML = sortedTransactions.slice(0, 10).map(transaction => `
                 <tr class="transaction-row border-b">
                     <td class="py-3">${formatDate(transaction.date)}</td>
@@ -2182,7 +2685,10 @@
                 return;
             }
             
-            tbody.innerHTML = transactionList.map(transaction => `
+            // Sort transactions by date descending (most recent first)
+            const sortedTransactions = [...transactionList].sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            tbody.innerHTML = sortedTransactions.map(transaction => `
                 <tr class="transaction-row border-b">
                     <td class="py-3">${formatDate(transaction.date)}</td>
                     <td class="py-3">
@@ -2232,7 +2738,9 @@
                 filtered = filtered.filter(t => t.category === categoryFilter);
             }
             
-            updateUnionTransactionsList(filtered);
+            // Sort filtered transactions by date descending (most recent first)
+            const sortedFiltered = [...filtered].sort((a, b) => new Date(b.date) - new Date(a.date));
+            updateUnionTransactionsList(sortedFiltered);
         }
 
         function exportUnionToCSV() {
@@ -2241,7 +2749,10 @@
             setTimeout(() => {
                 let csv = 'Date,User,Description,Category,Type,Amount\n';
                 
-                unionTransactions.forEach(t => {
+                // Sort transactions by date descending (most recent first)
+                const sortedTransactions = [...unionTransactions].sort((a, b) => new Date(b.date) - new Date(a.date));
+                
+                sortedTransactions.forEach(t => {
                     csv += `${t.date},${t.userName},"${t.notes || t.category}",${t.category},${t.type},${t.amount}\n`;
                 });
                 
@@ -2292,7 +2803,10 @@
                 doc.text(`Net Balance: ${formatCurrency(balance)}`, 20, 80);
                 
                 // Add transactions table
-                const tableData = unionTransactions.map(t => [
+                // Sort transactions by date descending (most recent first)
+                const sortedTransactions = [...unionTransactions].sort((a, b) => new Date(b.date) - new Date(a.date));
+                
+                const tableData = sortedTransactions.map(t => [
                     formatDate(t.date),
                     t.userName,
                     t.category,
@@ -2462,7 +2976,10 @@
             setTimeout(() => {
                 let csv = 'Date,Type,Category,Amount,Notes\n';
                 
-                transactions.forEach(t => {
+                // Sort transactions by date descending (most recent first)
+                const sortedTransactions = [...transactions].sort((a, b) => new Date(b.date) - new Date(a.date));
+                
+                sortedTransactions.forEach(t => {
                     csv += `${t.date},${t.type},${t.category},${t.amount},"${t.notes || ''}"\n`;
                 });
                 
@@ -2518,7 +3035,10 @@
                 doc.text(`Net Balance: ${formatCurrency(balance)}`, 20, 80);
                 
                 // Add transactions table
-                const tableData = transactions.map(t => [
+                // Sort transactions by date descending (most recent first)
+                const sortedTransactions = [...transactions].sort((a, b) => new Date(b.date) - new Date(a.date));
+                
+                const tableData = sortedTransactions.map(t => [
                     formatDate(t.date),
                     t.type,
                     t.category,
@@ -2596,8 +3116,6 @@
                     currency: localStorage.getItem('currency') || 'INR',
                     budgetAlerts: localStorage.getItem('budgetAlerts') === 'true',
                     budgetLimit: localStorage.getItem('budgetLimit') || 0,
-                    darkMode: localStorage.getItem('darkMode') === 'true',
-                    theme: localStorage.getItem('theme') || 'light',
                     dateFormat: localStorage.getItem('dateFormat') || 'DD/MM/YYYY'
                 },
                 profile: {
@@ -2639,8 +3157,6 @@
                                 if (data.settings.currency) localStorage.setItem('currency', data.settings.currency);
                                 if (data.settings.budgetAlerts !== undefined) localStorage.setItem('budgetAlerts', data.settings.budgetAlerts);
                                 if (data.settings.budgetLimit !== undefined) localStorage.setItem('budgetLimit', data.settings.budgetLimit);
-                                if (data.settings.darkMode !== undefined) localStorage.setItem('darkMode', data.settings.darkMode);
-                                if (data.settings.theme !== undefined) localStorage.setItem('theme', data.settings.theme);
                                 if (data.settings.dateFormat !== undefined) localStorage.setItem('dateFormat', data.settings.dateFormat);
                                 
                                 // Update UI elements
@@ -2754,12 +3270,10 @@
         function getCategoryColor(category) {
             const colors = {
                 'Food': 'bg-yellow-100 text-yellow-800',
-                'Transport': 'bg-blue-100 text-blue-800',
-                'Housing': 'bg-purple-100 text-purple-800',
-                'Entertainment': 'bg-pink-100 text-pink-800',
+                'Bus Fair': 'bg-blue-100 text-blue-800',
+                'Monthly Fee': 'bg-purple-100 text-purple-800',
+                'SSLC': 'bg-pink-100 text-pink-800',
                 'Healthcare': 'bg-red-100 text-red-800',
-                'Salary': 'bg-green-100 text-green-800',
-                'Freelance': 'bg-teal-100 text-teal-800',
                 'Other': 'bg-gray-100 text-gray-800'
             };
             return colors[category] || 'bg-gray-100 text-gray-800';
@@ -2867,7 +3381,7 @@
                 return;
             }
             
-            // Update table
+            // Update table - only show recent transactions (last 10)
             tbody.innerHTML = transactionList.slice(0, 10).map(transaction => `
                 <tr class="transaction-row border-b">
                     <td class="py-3">${formatDate(transaction.date)}</td>
@@ -2926,19 +3440,6 @@
         function closeWelcomeBanner() {
             document.getElementById('welcome-banner').style.display = 'none';
         }
-
-        // Check for system theme preference changes
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-            if (localStorage.getItem('theme') === 'system') {
-                if (e.matches) {
-                    document.body.classList.add('dark');
-                    document.getElementById('theme-icon').classList.replace('fa-moon', 'fa-sun');
-                } else {
-                    document.body.classList.remove('dark');
-                    document.getElementById('theme-icon').classList.replace('fa-sun', 'fa-moon');
-                }
-            }
-        });
     </script>
 </body>
 </html>
