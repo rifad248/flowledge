@@ -1338,194 +1338,107 @@
             </div>
         </div>
     </footer>
- <!-- Floating Chat Button -->
-<div id="chatbot-btn" class="fixed bottom-6 right-6 bg-emerald-500 text-white p-4 rounded-full shadow-lg cursor-pointer hover:bg-emerald-600 transition">
-  💬
-</div>
 
-<!-- Chatbot Window -->
-<div id="chatbot" class="fixed bottom-20 right-6 w-80 bg-gray-900 text-white rounded-2xl shadow-lg hidden flex-col">
-  <div class="flex justify-between items-center bg-emerald-600 px-4 py-3 rounded-t-2xl">
-    <h2 class="text-lg font-semibold">FlowLedger Chatbot</h2>
-    <button id="close-chatbot" class="text-white hover:text-gray-200 text-xl">&times;</button>
-  </div>
+    <!-- Chatbot -->
+    <div class="chatbot-container">
+        <button id="chatbot-toggle" class="chatbot-toggle" onclick="toggleChatbot()">
+            <i class="fas fa-comments"></i>
+        </button>
+        
+        <div id="chatbot-window" class="chatbot-window">
+            <div class="chatbot-header">
+                <h3>FlowLedge Assistant</h3>
+                <button class="chatbot-close" onclick="toggleChatbot()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="chatbot-body">
+                <div class="chatbot-category">
+                    <div class="chatbot-category-title">💬 Basic Info</div>
+                    <div class="chatbot-question" onclick="toggleAnswer(this)">What is FlowLedger?</div>
+                    <div class="chatbot-answer">FlowLedger is a smart money ledger that helps you track your income, expenses, and savings easily.</div>
+                    
+                    <div class="chatbot-question" onclick="toggleAnswer(this)">How can I start using FlowLedger?</div>
+                    <div class="chatbot-answer">Just create an account, log in, and add your first income or expense entry. You'll instantly see your balance and reports update.</div>
+                    
+                    <div class="chatbot-question" onclick="toggleAnswer(this)">Is FlowLedger free to use?</div>
+                    <div class="chatbot-answer">Yes, FlowLedger is completely free for personal use.</div>
+                    
+                    <div class="chatbot-question" onclick="toggleAnswer(this)">Can I use FlowLedger on mobile?</div>
+                    <div class="chatbot-answer">Yes, the site is fully responsive and works smoothly on mobile and tablet screens.</div>
+                </div>
+                
+                <div class="chatbot-category">
+                    <div class="chatbot-category-title">🧾 Transactions</div>
+                    <div class="chatbot-question" onclick="toggleAnswer(this)">How do I add a new transaction?</div>
+                    <div class="chatbot-answer">Go to the "Add Transaction" section, choose income or expense, select a category, enter the amount, date, and notes, then click "Save."</div>
+                    
+                    <div class="chatbot-question" onclick="toggleAnswer(this)">Can I edit or delete a transaction?</div>
+                    <div class="chatbot-answer">Yes, open your transaction list and click the edit or delete icon beside the item you want to change.</div>
+                    
+                    <div class="chatbot-question" onclick="toggleAnswer(this)">How can I search or filter my transactions?</div>
+                    <div class="chatbot-answer">Use the search bar or category filter to quickly find specific transactions.</div>
+                    
+                    <div class="chatbot-question" onclick="toggleAnswer(this)">What do the categories mean?</div>
+                    <div class="chatbot-answer">Categories help organize your spending, like Food, Bus Fare, Monthly Bills, or Other. You can add your own categories in settings.</div>
+                </div>
+                
+                <div class="chatbot-category">
+                    <div class="chatbot-category-title">📊 Reports & Insights</div>
+                    <div class="chatbot-question" onclick="toggleAnswer(this)">Where can I see my income and expense reports?</div>
+                    <div class="chatbot-answer">Visit the "Reports" tab to view charts and summaries of your monthly or yearly transactions.</div>
+                    
+                    <div class="chatbot-question" onclick="toggleAnswer(this)">How do I know if I'm overspending?</div>
+                    <div class="chatbot-answer">If you've set a budget limit, FlowLedger will alert you when you cross your limit for the month.</div>
+                    
+                    <div class="chatbot-question" onclick="toggleAnswer(this)">Can I export my data?</div>
+                    <div class="chatbot-answer">Yes, you can export all transactions to a CSV file for backup or use in Excel or Google Sheets.</div>
+                </div>
+                
+                <div class="chatbot-category">
+                    <div class="chatbot-category-title">⚙️ Settings & Features</div>
+                    <div class="chatbot-question" onclick="toggleAnswer(this)">How can I change the currency?</div>
+                    <div class="chatbot-answer">Go to the Settings section and select your preferred currency from the dropdown menu.</div>
+                    
+                    <div class="chatbot-question" onclick="toggleAnswer(this)">What does "Recurring Transaction" mean?</div>
+                    <div class="chatbot-answer">It automatically adds repeated entries, like monthly rent or salary, without you entering them manually every time.</div>
+                </div>
+                
+                <div class="chatbot-category">
+                    <div class="chatbot-category-title">🔐 Account & Privacy</div>
+                    <div class="chatbot-question" onclick="toggleAnswer(this)">Is my financial data safe?</div>
+                    <div class="chatbot-answer">Yes, your data is stored securely and never shared. Always log out after using on a shared device.</div>
+                    
+                    <div class="chatbot-question" onclick="toggleAnswer(this)">I forgot my password, what should I do?</div>
+                    <div class="chatbot-answer">Click "Forgot Password?" on the login page and follow the steps to reset it via email.</div>
+                </div>
+                
+                <div class="chatbot-category">
+                    <div class="chatbot-category-title">💡 Tips & Help</div>
+                    <div class="chatbot-question" onclick="toggleAnswer(this)">How do I track my monthly savings?</div>
+                    <div class="chatbot-answer">Enter both income and expenses. Your remaining balance automatically shows how much you've saved.</div>
+                    
+                    <div class="chatbot-question" onclick="toggleAnswer(this)">How can I make my dashboard more organized?</div>
+                    <div class="chatbot-answer">Use clear categories, add notes to each entry, and check reports weekly.</div>
+                    
+                    <div class="chatbot-question" onclick="toggleAnswer(this)">My balance looks wrong, what can I do?</div>
+                    <div class="chatbot-answer">Double-check for duplicate entries or incorrect transaction types (income vs expense).</div>
+                    
+                    <div class="chatbot-question" onclick="toggleAnswer(this)">Who created FlowLedger?</div>
+                    <div class="chatbot-answer">FlowLedger is designed by TyPixel, focused on simple and smart personal finance tools.</div>
+                    
+                    <div class="chatbot-question" onclick="toggleAnswer(this)">Who is the founder of FlowLedger?</div>
+                    <div class="chatbot-answer">FlowLedger was founded and developed by Rifad, a designer and creator behind TyPixel.</div>
+                    
+                    <div class="chatbot-question" onclick="toggleAnswer(this)">How can I contact the FlowLedger team?</div>
+                    <div class="chatbot-answer">You can reach Rifad, the founder of FlowLedger, by email at rifadwork@gmail.com or +918606218631 through WhatsApp Chat for quick support.</div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-  <div id="chat-content" class="p-4 h-96 overflow-y-auto text-sm space-y-4">
-    <div class="text-gray-300">👋 Hi! I’m your FlowLedger Assistant. Ask me anything about money tracking, features, or support!</div>
-  </div>
-
-  <div class="flex items-center p-3 border-t border-gray-700">
-    <input id="user-input" type="text" placeholder="Type your message..." class="flex-1 bg-gray-800 text-white p-2 rounded-lg outline-none text-sm">
-    <button id="send-btn" class="ml-2 bg-emerald-500 hover:bg-emerald-600 px-4 py-2 rounded-lg text-white text-sm">Send</button>
-  </div>
-</div>
-
-<script>
-  const chatbotBtn = document.getElementById('chatbot-btn');
-  const chatbot = document.getElementById('chatbot');
-  const closeChatbot = document.getElementById('close-chatbot');
-  const sendBtn = document.getElementById('send-btn');
-  const userInput = document.getElementById('user-input');
-  const chatContent = document.getElementById('chat-content');
-
-  // Predefined Q&A for FlowLedger
-  const qa = {
-    "what is flowledger": "FlowLedger is a smart money ledger that helps you track income, expenses, and savings easily.",
-    "how can i start using flowledger": "Create an account, log in, and add your first income or expense entry.",
-    "is flowledger free": "Yes, FlowLedger is completely free for personal use.",
-    "can i use flowledger on mobile": "Yes, FlowLedger works smoothly on mobile and tablet screens.",
-    "how to add transaction": "Go to 'Add Transaction', choose income or expense, fill details, and click 'Save'.",
-    "can i edit or delete a transaction": "Yes, open your transaction list and click the edit or delete icon beside it.",
-    "can i export my data": "Yes, you can export your data as a CSV file for backup or Excel.",
-    "who is the founder of flowledger": "FlowLedger was founded and developed by Rifad, the creator behind TyPixel.",
-    "who created flowledger": "FlowLedger is designed by TyPixel, focused on simple and smart personal finance tools.",
-    "how can i contact the flowledger team": "You can reach Rifad at rifadwork@gmail.com or on WhatsApp at +91 8606218631."
-  };
-
-  // Generic fallback responses
-  const generalReplies = [
-    "I'm here to help! You can ask about FlowLedger features, reports, or settings.",
-    "Interesting! Can you tell me more about what you want to know?",
-    "That’s a good question. FlowLedger is all about helping you manage your money easily.",
-    "I’m not sure about that, but you can check your Reports tab for more insights.",
-    "I didn’t fully get that, but you can contact Rifad for more details at rifadwork@gmail.com."
-  ];
-
-  function addMessage(text, sender) {
-    const msg = document.createElement('div');
-    msg.className = sender === 'user' ? 'text-right text-emerald-400' : 'text-gray-300';
-    msg.textContent = text;
-    chatContent.appendChild(msg);
-    chatContent.scrollTop = chatContent.scrollHeight;
-  }
-
-  function getReply(input) {
-    input = input.toLowerCase();
-    const found = Object.keys(qa).find(q => input.includes(q));
-    if (found) return qa[found];
-    // Random general reply if no match
-    return generalReplies[Math.floor(Math.random() * generalReplies.length)];
-  }
-
-  sendBtn.addEventListener('click', () => {
-    const input = userInput.value.trim();
-    if (!input) return;
-
-    addMessage(input, 'user');
-    userInput.value = '';
-
-    setTimeout(() => {
-      const reply = getReply(input);
-      addMessage(reply, 'bot');
-    }, 600);
-  });
-
-  chatbotBtn.addEventListener('click', () => chatbot.classList.toggle('hidden'));
-  closeChatbot.addEventListener('click', () => chatbot.classList.add('hidden'));
-</script>
-
-/* ---------- Utilities: normalize and simple scoring ---------- */
-function normalize(text){
-  return text.toLowerCase().replace(/[’'".?,-\/#!$%\^&\*;:{}=\_`~()]/g,"").trim();
-}
-
-function bestMatch(input){
-  const s = normalize(input);
-  // score by common token count
-  const tokens = s.split(/\s+/).filter(Boolean);
-  let best = {score:0, item:null};
-  for(const item of QA){
-    const q = normalize(item.q);
-    const qTokens = q.split(/\s+/).filter(Boolean);
-    let hits = 0;
-    for(const t of tokens){
-      if(qTokens.includes(t)) hits++;
-      // partial match
-      else {
-        for(const qt of qTokens){
-          if(qt.includes(t) || t.includes(qt)) { hits++; break; }
-        }
-      }
-    }
-    // small boost for exact containment
-    if(q.includes(s) || s.includes(q)) hits += 0.5;
-    if(hits > best.score){ best = {score: hits, item}; }
-  }
-  return best.item;
-}
-
-/* ---------- UI wiring ---------- */
-const openBtn = document.getElementById('openBtn');
-const closeBtn = document.getElementById('closeBtn');
-const widget = document.getElementById('widget');
-const messages = document.getElementById('messages');
-const userInput = document.getElementById('userInput');
-const sendBtn = document.getElementById('sendBtn');
-
-openBtn.addEventListener('click', () => {
-  widget.style.display = 'block';
-  openBtn.style.display = 'none';
-  addBot("Hi, I'm the FlowLedger assistant. Ask me about transactions, reports, settings, or contact info. Try: How do I add a transaction?");
-});
-
-closeBtn.addEventListener('click', () => {
-  widget.style.display = 'none';
-  openBtn.style.display = 'inline-block';
-});
-
-sendBtn.addEventListener('click', sendMessage);
-userInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') sendMessage(); });
-
-function addBot(text){
-  const el = document.createElement('div');
-  el.className = 'msg bot';
-  el.innerHTML = text;
-  messages.appendChild(el);
-  messages.scrollTop = messages.scrollHeight;
-}
-
-function addUser(text){
-  const el = document.createElement('div');
-  el.className = 'msg user';
-  el.textContent = text;
-  messages.appendChild(el);
-  messages.scrollTop = messages.scrollHeight;
-}
-
-function sendMessage(){
-  const text = userInput.value.trim();
-  if(!text) return;
-  addUser(text);
-  userInput.value = '';
-  // find best match
-  const hit = bestMatch(text);
-  if(hit && hit.a){
-    // small delay for realism
-    setTimeout(()=> addBot(hit.a), 250);
-  } else {
-    setTimeout(()=> {
-      addBot("Sorry, I didn't understand that. Here are some things you can ask:");
-      const sug = document.createElement('div');
-      sug.className = 'small suggest';
-      const examples = [
-        "How do I add a transaction?",
-        "Can I export my data?",
-        "How can I change the currency?",
-        "Who is the founder of FlowLedger?"
-      ];
-      for(const eText of examples){
-        const c = document.createElement('button');
-        c.className = 'chip';
-        c.textContent = eText;
-        c.onclick = () => { addUser(eText); userInput.value = eText; sendMessage(); };
-        sug.appendChild(c);
-      }
-      messages.appendChild(sug);
-      messages.scrollTop = messages.scrollHeight;
-    }, 300);
-  }
-}
-</script>
+    <script>
         // User database with profile images
         const users = {
             '1050': { 
@@ -3427,5 +3340,3 @@ function sendMessage(){
     </script>
 </body>
 </html>
-
-
