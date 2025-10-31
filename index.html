@@ -1338,107 +1338,83 @@
             </div>
         </div>
     </footer>
-   <!-- flowledger-chatbot.html -->
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>FlowLedger Chatbot</title>
-<style>
-  :root{--bg:#0b1220;--card:#0f1724;--accent:#10b981;--muted:#9aa6b2;--bubble:#111827}
-  body{font-family:Inter,system-ui,Segoe UI,Arial; background:var(--bg); color:#fff; margin:0; padding:24px;}
-  .chat-launch{position:fixed; right:24px; bottom:24px; z-index:9999}
-  .btn{background:var(--accent); color:#042018; padding:12px 16px; border-radius:10px; font-weight:600; border:none; cursor:pointer; box-shadow:0 6px 18px rgba(16,185,129,0.18)}
-  .widget{width:360px; max-width:calc(100% - 48px); border-radius:12px; overflow:hidden; box-shadow:0 14px 40px rgba(2,6,23,0.6); background:linear-gradient(180deg,var(--card),#08101a)}
-  .header{padding:14px 16px; display:flex; align-items:center; gap:10px; background:#07111a}
-  .title{font-weight:700; color:var(--accent)}
-  .body{height:420px; overflow:auto; padding:12px; display:flex; flex-direction:column; gap:10px}
-  .input-wrap{display:flex; gap:8px; padding:12px; background:linear-gradient(180deg,#08121a,#041018)}
-  .in{flex:1; padding:10px 12px; border-radius:10px; border:1px solid #12202a; background:#06121a; color:#d1e8e0}
-  .send{padding:10px 12px; border-radius:10px; background:var(--accent); border:none; font-weight:700; cursor:pointer}
-  .msg{max-width:82%; padding:10px 12px; border-radius:10px; line-height:1.3}
-  .bot{align-self:flex-start; background:var(--bubble); color:#e6f7f0}
-  .user{align-self:flex-end; background:#0f1724; color:#cfece3}
-  .small{font-size:12px; color:var(--muted); margin-top:6px}
-  .suggest{display:flex; gap:6px; flex-wrap:wrap; margin-top:8px}
-  .chip{padding:6px 10px; background:#07111a; border-radius:999px; cursor:pointer; border:1px solid #152430}
-  a.contact{color:var(--accent); text-decoration:underline}
-</style>
-</head>
-<body>
-
-<!-- Launch button -->
-<div class="chat-launch">
-  <button id="openBtn" class="btn">Chat with FlowLedger</button>
+ <!-- Chatbot Floating Button -->
+<div id="chatbot-btn" class="fixed bottom-6 right-6 bg-emerald-500 text-white p-4 rounded-full shadow-lg cursor-pointer hover:bg-emerald-600 transition">
+  💬
 </div>
 
-<!-- Chat widget (hidden by default) -->
-<div id="widget" style="display:none; position:fixed; right:24px; bottom:84px; z-index:9999;">
-  <div class="widget">
-    <div class="header">
-      <div style="width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,#072025,#09363a);display:flex;align-items:center;justify-content:center;font-weight:800;color:#9ff0df">FL</div>
-      <div>
-        <div class="title">FlowLedger Assistant</div>
-        <div class="small">Ask about features, reports, or account help</div>
-      </div>
-      <div style="margin-left:auto">
-        <button id="closeBtn" class="btn" style="background:#0b1220;color:var(--accent);padding:8px 10px">Close</button>
-      </div>
-    </div>
+<!-- Chatbot Window -->
+<div id="chatbot" class="fixed bottom-20 right-6 w-80 bg-gray-900 text-white rounded-2xl shadow-lg hidden flex-col">
+  <div class="flex justify-between items-center bg-emerald-600 px-4 py-3 rounded-t-2xl">
+    <h2 class="text-lg font-semibold">FlowLedger Chatbot</h2>
+    <button id="close-chatbot" class="text-white hover:text-gray-200 text-xl">&times;</button>
+  </div>
+  
+  <div id="chat-content" class="p-4 h-96 overflow-y-auto text-sm space-y-4">
+    <div class="text-gray-300">👋 Hi! I’m your FlowLedger assistant. Ask me anything!</div>
+  </div>
 
-    <div id="messages" class="body" aria-live="polite"></div>
-
-    <div style="border-top:1px solid rgba(255,255,255,0.03)">
-      <div class="input-wrap">
-        <input id="userInput" class="in" placeholder="Type a question. Try: How do I add a transaction?" />
-        <button id="sendBtn" class="send">Send</button>
-      </div>
-    </div>
+  <div class="flex items-center p-3 border-t border-gray-700">
+    <input id="user-input" type="text" placeholder="Type your question..." class="flex-1 bg-gray-800 text-white p-2 rounded-lg outline-none text-sm">
+    <button id="send-btn" class="ml-2 bg-emerald-500 hover:bg-emerald-600 px-4 py-2 rounded-lg text-white text-sm">Send</button>
   </div>
 </div>
 
 <script>
-/* ---------- Q&A dataset ---------- */
-const QA = [
-  // Basic Info
-  {q: "what is flowledger", a: "FlowLedger is a smart money ledger that helps you track your income, expenses, and savings easily."},
-  {q: "how can i start using flowledger", a: "Create an account, log in, and add your first income or expense entry. Your balance and reports update instantly."},
-  {q: "is flowledger free", a: "Yes, FlowLedger is completely free for personal use."},
-  {q: "can i use flowledger on mobile", a: "Yes, the site is fully responsive and works smoothly on mobile and tablet screens."},
+  const chatbotBtn = document.getElementById('chatbot-btn');
+  const chatbot = document.getElementById('chatbot');
+  const closeChatbot = document.getElementById('close-chatbot');
+  const sendBtn = document.getElementById('send-btn');
+  const userInput = document.getElementById('user-input');
+  const chatContent = document.getElementById('chat-content');
 
-  // Transactions
-  {q: "how do i add a new transaction", a: "Go to the Add Transaction section, choose income or expense, select a category, enter amount, date and notes, then click Save."},
-  {q: "can i edit or delete a transaction", a: "Yes, open your transaction list and click the edit or delete icon beside the item you want to change."},
-  {q: "how can i search or filter my transactions", a: "Use the search bar or category filter to quickly find specific transactions."},
-  {q: "what do the categories mean", a: "Categories help organize your spending, like Food, Bus Fare, Monthly Bills, or Other. You can add your own categories in Settings."},
+  // Q&A dataset
+  const qa = {
+    "what is flowledger": "FlowLedger is a smart money ledger that helps you track income, expenses, and savings easily.",
+    "how can i start using flowledger": "Create an account, log in, and add your first income or expense entry.",
+    "is flowledger free": "Yes, FlowLedger is completely free for personal use.",
+    "can i use flowledger on mobile": "Yes, the site is fully responsive and mobile-friendly.",
+    "how can i contact the flowledger team": "You can reach Rifad, the founder, at rifadwork@gmail.com or on WhatsApp at +91 8606218631.",
+    "who is the founder of flowledger": "FlowLedger was founded and developed by Rifad, the creator behind TyPixel.",
+    "who created flowledger": "FlowLedger is designed by TyPixel, focused on simple and smart personal finance tools.",
+    "how to add transaction": "Go to 'Add Transaction', choose income or expense, fill details, and click 'Save'.",
+    "can i edit or delete a transaction": "Yes, click the edit or delete icon beside the transaction you want to change.",
+    "can i export my data": "Yes, you can export all transactions to a CSV file for backup or Excel use."
+  };
 
-  // Reports & Insights
-  {q: "where can i see my income and expense reports", a: "Visit the Reports tab to view charts and summaries of your monthly or yearly transactions."},
-  {q: "how do i know if i’m overspending", a: "If you’ve set a budget limit, FlowLedger will alert you when you cross your monthly limit."},
-  {q: "can i export my data", a: "Yes, you can export all transactions to a CSV file for backup or use in Excel or Google Sheets."},
+  function addMessage(text, sender) {
+    const msg = document.createElement('div');
+    msg.className = sender === 'user' ? 'text-right text-emerald-400' : 'text-gray-300';
+    msg.textContent = text;
+    chatContent.appendChild(msg);
+    chatContent.scrollTop = chatContent.scrollHeight;
+  }
 
-  // Settings & Features
-  {q: "how can i change the currency", a: "Go to Settings and select your preferred currency from the dropdown menu."},
-  {q: "does flowledger have dark mode", a: "Yes, you can switch between light and dark mode anytime from Settings or the top bar toggle."},
-  {q: "can i recover my data after clearing it", a: "Only if you exported or backed up your data before clearing. Make backups regularly."},
-  {q: "what does recurring transaction mean", a: "A recurring transaction automatically adds repeated entries, like monthly rent or salary."},
+  sendBtn.addEventListener('click', () => {
+    const input = userInput.value.trim().toLowerCase();
+    if (!input) return;
 
-  // Account & Privacy
-  {q: "is my financial data safe", a: "Yes, your data is stored securely and not shared. Always log out when using shared devices."},
-  {q: "can i sign in using google", a: "If enabled, you can sign in with Google using the Sign in with Google button."},
-  {q: "i forgot my password", a: "Click Forgot Password on the login page and follow the email reset steps."},
+    addMessage(userInput.value, 'user');
+    userInput.value = '';
 
-  // Tips & Help
-  {q: "how do i track my monthly savings", a: "Enter both income and expenses. The remaining balance shows how much you saved."},
-  {q: "how can i make my dashboard more organized", a: "Use clear categories, add notes to entries, and review reports weekly."},
-  {q: "my balance looks wrong", a: "Double-check for duplicate entries or incorrect transaction types (income vs expense)."},
-  {q: "who created flowledger", a: "FlowLedger is designed by TyPixel, focused on simple and smart personal finance tools."},
-  {q: "who is the founder of flowledger", a: "FlowLedger was founded and developed by Rifad."},
+    const reply = Object.keys(qa).find(q => input.includes(q)) 
+      ? qa[Object.keys(qa).find(q => input.includes(q))] 
+      : "Sorry, I don’t have an answer for that yet. Try asking about FlowLedger’s features, founder, or transactions.";
+    
+    setTimeout(() => addMessage(reply, 'bot'), 600);
+  });
 
-  // Contact (no raw phone printed; includes email + WhatsApp link)
-  {q: "how can i contact the flowledger team", a: `You can reach Rifad at <a class="contact" href="mailto:rifadwork@gmail.com">rifadwork@gmail.com</a> or via <a class="contact" href="https://wa.me/918606218631" target="_blank">WhatsApp chat</a>.`}
-];
+  // Open chatbot
+  chatbotBtn.addEventListener('click', () => {
+    chatbot.classList.toggle('hidden');
+  });
+
+  // Close chatbot
+  closeChatbot.addEventListener('click', () => {
+    chatbot.classList.add('hidden');
+  });
+</script>
+
 
 /* ---------- Utilities: normalize and simple scoring ---------- */
 function normalize(text){
@@ -3443,3 +3419,4 @@ function sendMessage(){
     </script>
 </body>
 </html>
+
